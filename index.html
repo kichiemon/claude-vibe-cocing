@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日の気分カラー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 今日の気分カラー</h1>
+            <p>あなたの気分に合ったカラーパレットを見つけよう</p>
+        </header>
+
+        <main>
+            <!-- 気分選択エリア -->
+            <section class="mood-selection">
+                <h2>今の気分はどれですか？</h2>
+                <div class="mood-buttons">
+                    <button class="mood-btn" data-mood="happy">😊 ハッピー</button>
+                    <button class="mood-btn" data-mood="relax">😌 リラックス</button>
+                    <button class="mood-btn" data-mood="energetic">⚡ エネルギッシュ</button>
+                    <button class="mood-btn" data-mood="melancholy">😔 メランコリー</button>
+                    <button class="mood-btn" data-mood="creative">🎨 クリエイティブ</button>
+                    <button class="mood-btn" data-mood="romantic">💕 ロマンチック</button>
+                    <button class="mood-btn" data-mood="focus">🎯 集中</button>
+                    <button class="mood-btn" data-mood="peace">🕊️ 平穏</button>
+                </div>
+            </section>
+
+            <!-- カラーパレット表示エリア -->
+            <section class="color-palette" id="colorPalette">
+                <h2 id="paletteTitle">カラーパレット</h2>
+                <div class="colors" id="colorGrid">
+                    <!-- 色のカードがここに動的に生成される -->
+                </div>
+            </section>
+
+            <!-- コピー通知 -->
+            <div class="copy-notification" id="copyNotification">
+                カラーコードをコピーしました！
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
