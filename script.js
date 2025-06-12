@@ -76,11 +76,36 @@ const moodColorMap = {
 class MoodColorApp {
     constructor() {
         this.currentMood = null;
+        // Theme-related properties
+        this.themeSelector = document.getElementById('themeSelector');
+        this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         this.init();
     }
 
     init() {
         this.bindEvents();
+        const preferredTheme = this.loadThemePreference();
+        this.applyTheme(preferredTheme);
+    }
+
+    // Theme Methods
+    applyTheme(theme) {
+        let activeTheme = theme;
+        if (theme === 'system') {
+            activeTheme = this.darkModeMediaQuery.matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = activeTheme;
+        if (this.themeSelector) {
+            this.themeSelector.value = theme; // Keep selector on "system" if that's the choice
+        }
+    }
+
+    saveThemePreference(theme) {
+        localStorage.setItem('themePreference', theme);
+    }
+
+    loadThemePreference() {
+        return localStorage.getItem('themePreference') || 'system';
     }
 
     bindEvents() {
@@ -89,6 +114,21 @@ class MoodColorApp {
             button.addEventListener('click', (e) => {
                 this.handleMoodSelection(e.target.dataset.mood);
             });
+        });
+
+        if (this.themeSelector) {
+            this.themeSelector.addEventListener('change', (e) => {
+                const selectedTheme = e.target.value;
+                this.saveThemePreference(selectedTheme);
+                this.applyTheme(selectedTheme);
+            });
+        }
+
+        this.darkModeMediaQuery.addEventListener('change', (e) => {
+            const currentPreference = this.loadThemePreference();
+            if (currentPreference === 'system') {
+                this.applyTheme('system');
+            }
         });
     }
 
