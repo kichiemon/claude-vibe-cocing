@@ -1,3 +1,16 @@
+const allMoods = [
+    { key: 'happy', displayText: '😊 ハッピー' },
+    { key: 'relax', displayText: '😌 リラックス' },
+    { key: 'energetic', displayText: '⚡ エネルギッシュ' },
+    { key: 'melancholy', displayText: '😔 メランコリー' },
+    { key: 'creative', displayText: '🎨 クリエイティブ' },
+    { key: 'romantic', displayText: '💕 ロマンチック' },
+    { key: 'focus', displayText: '🎯 集中' },
+    { key: 'peace', displayText: '🕊️ 平穏' },
+    { key: 'shindoi', displayText: '💦 しんどい' },
+    { key: 'saikou', displayText: '💦 最高' }
+];
+
 const moodColorMap = {
     happy: {
         name: 'ハッピー',
@@ -70,6 +83,24 @@ const moodColorMap = {
             { hex: '#F0FFFF', name: '水色' },
             { hex: '#FFFAF0', name: '白' }
         ]
+    },
+    shindoi: {
+        name: 'しんどい',
+        colors: [
+            { hex: '#2F4F4F', name: '暗いスレートグレー' },
+            { hex: '#696969', name: 'ディムグレー' },
+            { hex: '#708090', name: 'スレートグレー' },
+            { hex: '#B0C4DE', name: 'ライトスチールブルー' }
+        ]
+    },
+    saikou: {
+        name: '最高',
+        colors: [
+            { hex: '#FFD700', name: 'ゴールド' },
+            { hex: '#FF1493', name: 'ディープピンク' },
+            { hex: '#32CD32', name: 'ライムグリーン' },
+            { hex: '#1E90FF', name: 'ドジャーブルー' }
+        ]
     }
 };
 
@@ -80,7 +111,29 @@ class MoodColorApp {
     }
 
     init() {
-        this.bindEvents();
+        this.displayRandomMoods(); // Generate buttons first
+        this.bindEvents();      // Then bind events to them
+    }
+
+    displayRandomMoods() {
+        const moodButtonsContainer = document.querySelector('.mood-buttons');
+        if (!moodButtonsContainer) {
+            console.error('Mood buttons container not found!');
+            return;
+        }
+        moodButtonsContainer.innerHTML = ''; // Clear existing buttons
+
+        // Shuffle and select 5 moods
+        const shuffledMoods = [...allMoods].sort(() => 0.5 - Math.random());
+        const selectedMoods = shuffledMoods.slice(0, 5);
+
+        selectedMoods.forEach(mood => {
+            const button = document.createElement('button');
+            button.className = 'mood-btn';
+            button.dataset.mood = mood.key;
+            button.textContent = mood.displayText;
+            moodButtonsContainer.appendChild(button);
+        });
     }
 
     bindEvents() {
