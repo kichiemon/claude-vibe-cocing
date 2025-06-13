@@ -5,11 +5,11 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: write
 
 jobs:
-  deploy-preview:
+  preview-screenshot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout PR
@@ -17,86 +17,143 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Set up preview path
-        run: |
-          echo "PREVIEW_PATH=pr-${{ github.event.number }}" >> $GITHUB_ENV
-          echo "PREVIEW_URL=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-${{ github.event.number }}" >> $GITHUB_ENV
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
 
-      - name: Setup gh-pages branch
+      - name: Install Playwright
         run: |
-          # Configure git credentials
-          git config --global credential.helper store
-          echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
-          
-          # Check if gh-pages branch exists
-          if git ls-remote --heads https://github.com/${{ github.repository }}.git gh-pages | grep -q gh-pages; then
-            echo "gh-pages branch exists, checking out..."
-            git clone --branch gh-pages --single-branch https://github.com/${{ github.repository }}.git gh-pages
-          else
-            echo "gh-pages branch does not exist, creating..."
-            mkdir gh-pages
-            cd gh-pages
-            git init
-            git remote add origin https://github.com/${{ github.repository }}.git
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            echo "# GitHub Pages" > README.md
-            git add README.md
-            git commit -m "Initial gh-pages commit"
-            git branch -M gh-pages
-            git push origin gh-pages
-            cd ..
-          fi
+          npm init -y
+          npm install playwright
 
-      - name: Create or update preview directory
+      - name: Take screenshot of HTML file
         run: |
-          # Create preview directory
-          mkdir -p gh-pages/${{ env.PREVIEW_PATH }}
-          
-          # Copy files to preview directory (exclude .git, .github, and gh-pages directory)
-          rsync -av --exclude='.git' --exclude='.github' --exclude='gh-pages' --exclude='*.md' ./ gh-pages/${{ env.PREVIEW_PATH }}/
-          
-          # Create an index file if it doesn't exist
-          if [ ! -f "gh-pages/${{ env.PREVIEW_PATH }}/index.html" ]; then
-            cp gh-pages/${{ env.PREVIEW_PATH }}/* gh-pages/${{ env.PREVIEW_PATH }}/ 2>/dev/null || true
-          fi
+          # Create a simple HTTP server and screenshot script
+          cat << 'EOF' > screenshot.js
+          const { chromium } = require('playwright');
+          const http = require('http');
+          const fs = require('fs');
+          const path = require('path');
 
-      - name: Commit and push to gh-pages
-        run: |
-          cd gh-pages
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Deploy preview for PR #${{ github.event.number }}" || echo "No changes to commit"
-          git push origin gh-pages
+          // Simple HTTP server
+          const server = http.createServer((req, res) => {
+            let filePath = './';
+            if (req.url === '/') {
+              filePath += 'index.html';
+            } else {
+              filePath += req.url;
+            }
 
-      - name: Enable GitHub Pages (if not already enabled)
-        run: |
-          gh api -X POST /repos/${{ github.repository }}/pages \
-            --field source='{"branch":"gh-pages","path":"/"}' \
-            --field build_type="legacy" || echo "Pages already enabled or failed to enable"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            const extname = path.extname(filePath);
+            let contentType = 'text/html';
+            
+            switch (extname) {
+              case '.js':
+                contentType = 'text/javascript';
+                break;
+              case '.css':
+                contentType = 'text/css';
+                break;
+              case '.json':
+                contentType = 'application/json';
+                break;
+              case '.png':
+                contentType = 'image/png';
+                break;
+              case '.jpg':
+                contentType = 'image/jpg';
+                break;
+            }
 
-      - name: Wait for deployment
-        run: sleep 30
+            fs.readFile(filePath, (error, content) => {
+              if (error) {
+                if (error.code == 'ENOENT') {
+                  res.writeHead(404);
+                  res.end('File not found');
+                } else {
+                  res.writeHead(500);
+                  res.end('Server error: ' + error.code);
+                }
+              } else {
+                res.writeHead(200, { 'Content-Type': contentType });
+                res.end(content, 'utf-8');
+              }
+            });
+          });
+
+          const PORT = 8080;
+          server.listen(PORT, async () => {
+            console.log(`Server running at http://localhost:${PORT}/`);
+            
+            // Launch browser and take screenshot
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            
+            try {
+              await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
+              await page.setViewportSize({ width: 1280, height: 720 });
+              await page.screenshot({ 
+                path: 'preview-screenshot.png', 
+                fullPage: true 
+              });
+              console.log('Screenshot saved as preview-screenshot.png');
+            } catch (error) {
+              console.error('Error taking screenshot:', error);
+              // Create a fallback image with error message
+              await page.setContent(`
+                <html>
+                  <body style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
+                    <h1 style="color: #d73a49;">Preview Error</h1>
+                    <p>Could not load the preview. Error: ${error.message}</p>
+                    <p>Please check the HTML file structure.</p>
+                  </body>
+                </html>
+              `);
+              await page.screenshot({ 
+                path: 'preview-screenshot.png',
+                fullPage: true 
+              });
+            }
+            
+            await browser.close();
+            server.close();
+            process.exit(0);
+          });
+          EOF
+
+          # Run the screenshot script
+          node screenshot.js
+
+      - name: Upload screenshot as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-screenshot
+          path: preview-screenshot.png
 
       - name: Find existing preview comment
         id: find-comment
         run: |
-          COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("🚀 **Preview deployed**")) | .id' | head -1)
+          COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("📸 **Preview Screenshot**")) | .id' | head -1)
           echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update or create preview comment
         run: |
-          COMMENT_BODY="🚀 **Preview deployed**
+          # Upload image to GitHub as an asset and get URL
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+          
+          COMMENT_BODY="📸 **Preview Screenshot**
 
-          Your preview is ready! View it here:
-          👀 **[Preview Site](${{ env.PREVIEW_URL }})**
+          Here's how your changes look:
 
-          This preview will be automatically deleted when the PR is closed."
+          ![Preview](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+
+          📁 **[Download full screenshot]($ARTIFACT_URL)**
+
+          > Screenshot taken automatically from PR #${{ github.event.number }}
+          > Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 
           if [ -n "${{ steps.find-comment.outputs.comment_id }}" ]; then
             gh pr comment ${{ github.event.number }} --edit-last --body "$COMMENT_BODY"
