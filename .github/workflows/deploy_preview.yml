@@ -1,0 +1,201 @@
+name: Deploy PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  preview-screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright
+          npx playwright install chromium
+
+      - name: Take screenshot of HTML file
+        run: |
+          # Create a simple HTTP server and screenshot script
+          cat << 'EOF' > screenshot.js
+          const { chromium } = require('playwright');
+          const http = require('http');
+          const fs = require('fs');
+          const path = require('path');
+
+          // Simple HTTP server
+          const server = http.createServer((req, res) => {
+            let filePath = './';
+            if (req.url === '/') {
+              filePath += 'index.html';
+            } else {
+              filePath += req.url;
+            }
+
+            const extname = path.extname(filePath);
+            let contentType = 'text/html';
+            
+            switch (extname) {
+              case '.js':
+                contentType = 'text/javascript';
+                break;
+              case '.css':
+                contentType = 'text/css';
+                break;
+              case '.json':
+                contentType = 'application/json';
+                break;
+              case '.png':
+                contentType = 'image/png';
+                break;
+              case '.jpg':
+                contentType = 'image/jpg';
+                break;
+            }
+
+            fs.readFile(filePath, (error, content) => {
+              if (error) {
+                if (error.code == 'ENOENT') {
+                  res.writeHead(404);
+                  res.end('File not found');
+                } else {
+                  res.writeHead(500);
+                  res.end('Server error: ' + error.code);
+                }
+              } else {
+                res.writeHead(200, { 'Content-Type': contentType });
+                res.end(content, 'utf-8');
+              }
+            });
+          });
+
+          const PORT = 8080;
+          server.listen(PORT, async () => {
+            console.log(`Server running at http://localhost:${PORT}/`);
+            
+            // Launch browser and take screenshot
+            const browser = await chromium.launch();
+            const page = await browser.newPage();
+            
+            try {
+              await page.goto(`http://localhost:${PORT}/`, { waitUntil: 'networkidle' });
+              await page.setViewportSize({ width: 1280, height: 720 });
+              await page.screenshot({ 
+                path: 'preview-screenshot.png', 
+                fullPage: true 
+              });
+              console.log('Screenshot saved as preview-screenshot.png');
+            } catch (error) {
+              console.error('Error taking screenshot:', error);
+              // Create a fallback image with error message
+              await page.setContent(`
+                <html>
+                  <body style="font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5;">
+                    <h1 style="color: #d73a49;">Preview Error</h1>
+                    <p>Could not load the preview. Error: ${error.message}</p>
+                    <p>Please check the HTML file structure.</p>
+                  </body>
+                </html>
+              `);
+              await page.screenshot({ 
+                path: 'preview-screenshot.png',
+                fullPage: true 
+              });
+            }
+            
+            await browser.close();
+            server.close();
+            process.exit(0);
+          });
+          EOF
+
+          # Run the screenshot script
+          node screenshot.js
+
+      - name: Upload screenshot as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-screenshot
+          path: preview-screenshot.png
+
+      - name: Find existing preview comment
+        id: find-comment
+        run: |
+          COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("📸 **Preview Screenshot**")) | .id' | head -1)
+          echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release for image hosting
+        id: upload-image
+        run: |
+          # Create a unique tag for this screenshot
+          TAG_NAME="pr-${{ github.event.number }}-screenshot"
+          
+          # Delete existing release if it exists
+          gh release delete "$TAG_NAME" --yes || echo "No existing release to delete"
+          
+          # Create a new release
+          gh release create "$TAG_NAME" \
+            --title "Preview Screenshot for PR #${{ github.event.number }}" \
+            --notes "Automated screenshot for PR preview" \
+            --prerelease
+          
+          # Upload the image to the release
+          gh release upload "$TAG_NAME" preview-screenshot.png --clobber
+          
+          # Get the download URL for the image
+          IMAGE_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/preview-screenshot.png"
+          echo "image_url=$IMAGE_URL" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Successfully uploaded screenshot to: $IMAGE_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update or create preview comment
+        run: |
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+          
+          if [ -n "${{ steps.upload-image.outputs.image_url }}" ]; then
+            COMMENT_BODY="📸 **Preview Screenshot**
+
+          Here's how your changes look:
+
+          ![Preview Screenshot](${{ steps.upload-image.outputs.image_url }})
+
+          📁 **[Download full screenshot]($ARTIFACT_URL)**
+
+          > Screenshot taken automatically from PR #${{ github.event.number }}
+          > Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          else
+            COMMENT_BODY="📸 **Preview Screenshot**
+
+          Screenshot has been generated but could not be embedded directly.
+
+          📁 **[Download screenshot]($ARTIFACT_URL)**
+
+          > Screenshot taken automatically from PR #${{ github.event.number }}
+          > Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          fi
+
+          if [ -n "${{ steps.find-comment.outputs.comment_id }}" ]; then
+            gh pr comment ${{ github.event.number }} --edit-last --body "$COMMENT_BODY"
+          else
+            gh pr comment ${{ github.event.number }} --body "$COMMENT_BODY"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

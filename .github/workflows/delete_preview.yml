@@ -1,0 +1,24 @@
+name: Delete PR Preview
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  delete-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete preview screenshots
+        run: |
+          # Delete the screenshot release for this PR
+          TAG_NAME="pr-${{ github.event.number }}-screenshot"
+          echo "Deleting screenshot release: $TAG_NAME"
+          
+          gh release delete "$TAG_NAME" --yes || echo "No screenshot release found to delete"
+          
+          echo "Screenshot cleanup completed for PR #${{ github.event.number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
