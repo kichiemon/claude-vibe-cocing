@@ -23,9 +23,8 @@ jobs:
 
       - name: Create preview repository
         run: |
-          gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository creation failed or already exists"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "Note: Repository creation requires manual setup or PAT token with repo creation permissions"
+          echo "Skipping repository creation step"
 
       - name: Clone or initialize preview repository
         run: |
@@ -36,7 +35,8 @@ jobs:
           if git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo; then
             echo "Successfully cloned existing repository"
           else
-            echo "Clone failed, creating new repository locally"
+            echo "Repository not found. Please create repository manually: ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}"
+            echo "Creating local repository structure for now..."
             mkdir preview-repo
             cd preview-repo
             git init
@@ -67,13 +67,13 @@ jobs:
           git add .
           git commit -m "Deploy preview for PR #${{ github.event.number }}" || echo "No changes to commit"
           
-          # Try to push, if it fails, create the repository and try again
-          if ! git push origin main; then
-            echo "Push failed, creating repository..."
-            cd ..
-            gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}"
-            cd preview-repo
-            git push origin main
+          # Try to push
+          if git push origin main; then
+            echo "Successfully pushed to preview repository"
+          else
+            echo "Push failed. Please ensure the repository ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} exists and is accessible."
+            echo "You may need to create the repository manually on GitHub."
+            exit 1
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
