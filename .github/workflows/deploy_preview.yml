@@ -7,6 +7,8 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: write
+  metadata: read
 
 jobs:
   deploy-preview:
@@ -22,15 +24,32 @@ jobs:
 
       - name: Create preview repository
         run: |
-          gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository already exists"
+          gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository creation failed or already exists"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Clone preview repository
+      - name: Clone or initialize preview repository
         run: |
           git config --global credential.helper store
           echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
-          git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo
+          
+          # Try to clone existing repository
+          if git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo; then
+            echo "Successfully cloned existing repository"
+          else
+            echo "Clone failed, creating new repository locally"
+            mkdir preview-repo
+            cd preview-repo
+            git init
+            git remote add origin https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            echo "# Preview Repository" > README.md
+            git add README.md
+            git commit -m "Initial commit"
+            git branch -M main
+            cd ..
+          fi
 
       - name: Copy files to preview repository
         run: |
@@ -50,7 +69,7 @@ jobs:
           git commit -m "Deploy preview for PR #${{ github.event.number }}" || echo "No changes to commit"
           git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Enable GitHub Pages
         run: |
@@ -58,7 +77,7 @@ jobs:
             --field source='{"branch":"main","path":"/"}' \
             --field build_type="legacy" || echo "Pages already enabled or failed to enable"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Wait for deployment
         run: sleep 30
@@ -69,7 +88,7 @@ jobs:
           COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("🚀 **Preview deployed**")) | .id' | head -1)
           echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update or create preview comment
         run: |
@@ -86,4 +105,4 @@ jobs:
             gh pr comment ${{ github.event.number }} --body "$COMMENT_BODY"
           fi
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
