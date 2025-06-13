@@ -1,0 +1,31 @@
+name: Delete PR Preview
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  delete-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up preview repository name
+        run: |
+          echo "PREVIEW_REPO=claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
+
+      - name: Delete preview repository
+        run: |
+          gh repo delete ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --yes || echo "Repository not found or already deleted"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add cleanup comment
+        run: |
+          gh pr comment ${{ github.event.number }} --body "🧹 **Preview cleaned up**
+
+          The preview repository has been deleted and the preview site is no longer available."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

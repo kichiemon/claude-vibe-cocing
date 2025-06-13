@@ -1,0 +1,87 @@
+name: Deploy PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up preview repository name
+        run: |
+          echo "PREVIEW_REPO=claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "PREVIEW_URL=https://${{ github.repository_owner }}.github.io/claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
+
+      - name: Create preview repository
+        run: |
+          gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository already exists"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clone preview repository
+        run: |
+          git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo
+
+      - name: Copy files to preview repository
+        run: |
+          # Remove existing files except .git
+          find preview-repo -mindepth 1 -name '.git' -prune -o -type f -delete
+          find preview-repo -mindepth 1 -name '.git' -prune -o -type d -empty -delete
+          
+          # Copy all files except .github directory to prevent workflow recursion
+          rsync -av --exclude='.git' --exclude='.github' --exclude='preview-repo' ./ preview-repo/
+
+      - name: Commit and push to preview repository
+        run: |
+          cd preview-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Deploy preview for PR #${{ github.event.number }}" || echo "No changes to commit"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable GitHub Pages
+        run: |
+          gh api -X POST /repos/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}/pages \
+            --field source='{"branch":"main","path":"/"}' \
+            --field build_type="legacy" || echo "Pages already enabled or failed to enable"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Find existing preview comment
+        id: find-comment
+        run: |
+          COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("🚀 **Preview deployed**")) | .id' | head -1)
+          echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update or create preview comment
+        run: |
+          COMMENT_BODY="🚀 **Preview deployed**
+
+          Your preview is ready! View it here:
+          👀 **[Preview Site](${{ env.PREVIEW_URL }})**
+
+          This preview will be automatically deleted when the PR is closed."
+
+          if [ -n "${{ steps.find-comment.outputs.comment_id }}" ]; then
+            gh pr comment ${{ github.event.number }} --edit-last --body "$COMMENT_BODY"
+          else
+            gh pr comment ${{ github.event.number }} --body "$COMMENT_BODY"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
