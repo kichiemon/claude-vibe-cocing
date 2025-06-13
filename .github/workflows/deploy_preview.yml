@@ -28,7 +28,9 @@ jobs:
 
       - name: Clone preview repository
         run: |
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+          git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo
 
       - name: Copy files to preview repository
         run: |
