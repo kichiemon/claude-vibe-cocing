@@ -1,0 +1,261 @@
+:root {
+    --main-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --container-bg: rgba(255,255,255,0.95);
+    --text-color: #333;
+    --heading-color: #333;
+    --header-text-color: white;
+    --header-text-shadow: rgba(0,0,0,0.3);
+    --button-bg: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --button-text-color: white;
+    --button-shadow: rgba(0,0,0,0.1);
+    --button-hover-shadow: rgba(0,0,0,0.15);
+    --active-button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --active-button-shadow: rgba(0,0,0,0.2);
+    --card-bg: white;
+    --card-shadow: rgba(0,0,0,0.1);
+    --card-hover-shadow: rgba(0,0,0,0.15);
+    --copy-notification-bg: #4CAF50;
+    --copy-notification-text-color: white;
+    --copy-notification-shadow: rgba(0,0,0,0.2);
+    --secondary-text-color: #666;
+}
+
+[data-theme="dark"] {
+    --main-bg: linear-gradient(135deg, #23272A 0%, #2C2F33 100%);
+    --container-bg: rgba(44, 47, 51, 0.95);
+    --text-color: #dcddde;
+    --heading-color: #ffffff;
+    --header-text-color: #ffffff;
+    --header-text-shadow: rgba(0,0,0,0.5);
+    --button-bg: linear-gradient(135deg, #7289da 0%, #5865f2 100%);
+    --button-text-color: #ffffff;
+    --button-shadow: rgba(0,0,0,0.2);
+    --button-hover-shadow: rgba(0,0,0,0.3);
+    --active-button-bg: linear-gradient(135deg, #5865f2 0%, #7289da 100%);
+    --active-button-shadow: rgba(0,0,0,0.4);
+    --card-bg: #2C2F33;
+    --card-shadow: rgba(0,0,0,0.2);
+    --card-hover-shadow: rgba(0,0,0,0.3);
+    --copy-notification-bg: #7289da;
+    --copy-notification-text-color: #ffffff;
+    --copy-notification-shadow: rgba(0,0,0,0.3);
+    --secondary-text-color: #99aab5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--main-bg);
+    min-height: 100vh;
+    color: var(--text-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--header-text-color);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px var(--header-text-shadow);
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.mood-selection {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px var(--card-shadow);
+}
+
+.mood-selection h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--heading-color);
+    font-size: 1.5rem;
+}
+
+.mood-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.mood-btn {
+    background: var(--button-bg);
+    border: none;
+    padding: 15px 20px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    color: var(--button-text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--button-shadow);
+}
+
+.mood-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--button-hover-shadow);
+}
+
+.mood-btn:active {
+    transform: translateY(0);
+}
+
+.mood-btn.active {
+    background: var(--active-button-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--active-button-shadow);
+}
+
+.color-palette {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px var(--card-shadow);
+    display: none;
+}
+
+.color-palette.show {
+    display: block;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.color-palette h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--heading-color);
+    font-size: 1.5rem;
+}
+
+.colors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.color-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px var(--card-shadow);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.color-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--card-hover-shadow);
+}
+
+.color-sample {
+    height: 120px;
+    width: 100%;
+    position: relative;
+}
+
+.color-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.color-code {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--heading-color); /* Should this be text-color or heading-color? Dark theme might need differentiation */
+    margin-bottom: 5px;
+}
+
+.color-name {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+}
+
+.copy-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--copy-notification-bg);
+    color: var(--copy-notification-text-color);
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--copy-notification-shadow);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+}
+
+.copy-notification.show {
+    transform: translateX(0);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .mood-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .colors {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    
+    .mood-selection, .color-palette {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .colors {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .color-sample {
+        height: 80px;
+    }
+    
+    .color-info {
+        padding: 10px;
+    }
+    
+    .color-code {
+        font-size: 0.9rem;
+    }
+}
