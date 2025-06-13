@@ -13,18 +13,12 @@ jobs:
     steps:
       - name: Delete preview screenshots
         run: |
-          # Find and delete releases with screenshots for this PR
-          PR_NUM="${{ github.event.number }}"
-          echo "Looking for screenshot releases for PR #$PR_NUM"
+          # Delete the screenshot release for this PR
+          TAG_NAME="pr-${{ github.event.number }}-screenshot"
+          echo "Deleting screenshot release: $TAG_NAME"
           
-          # Get all releases and filter for screenshot releases for this PR
-          gh release list --json tagName,name | jq -r ".[] | select(.tagName | startswith(\"screenshot-pr-$PR_NUM-\")) | .tagName" | while read tag; do
-            if [ -n "$tag" ]; then
-              echo "Deleting release: $tag"
-              gh release delete "$tag" --yes || echo "Failed to delete release $tag"
-            fi
-          done
+          gh release delete "$TAG_NAME" --yes || echo "No screenshot release found to delete"
           
-          echo "Screenshot cleanup completed for PR #$PR_NUM"
+          echo "Screenshot cleanup completed for PR #${{ github.event.number }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

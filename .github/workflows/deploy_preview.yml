@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
@@ -144,14 +144,19 @@ jobs:
         id: upload-image
         run: |
           # Create a unique tag for this screenshot
-          TAG_NAME="screenshot-pr-${{ github.event.number }}-$(date +%s)"
+          TAG_NAME="pr-${{ github.event.number }}-screenshot"
           
-          # Create a release to host the image
+          # Delete existing release if it exists
+          gh release delete "$TAG_NAME" --yes || echo "No existing release to delete"
+          
+          # Create a new release
           gh release create "$TAG_NAME" \
             --title "Preview Screenshot for PR #${{ github.event.number }}" \
             --notes "Automated screenshot for PR preview" \
-            --prerelease \
-            preview-screenshot.png
+            --prerelease
+          
+          # Upload the image to the release
+          gh release upload "$TAG_NAME" preview-screenshot.png --clobber
           
           # Get the download URL for the image
           IMAGE_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/preview-screenshot.png"
