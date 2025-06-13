@@ -70,6 +70,15 @@ const moodColorMap = {
             { hex: '#F0FFFF', name: '水色' },
             { hex: '#FFFAF0', name: '白' }
         ]
+    },
+    tough: {
+        name: 'しんどい',
+        colors: [
+            { hex: '#556B2F', name: '暗オリーブ' },
+            { hex: '#708090', name: '灰青' },
+            { hex: '#2F4F4F', name: '暗緑' },
+            { hex: '#4682B4', name: '鋼青' }
+        ]
     }
 };
 
