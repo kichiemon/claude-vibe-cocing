@@ -53,8 +53,8 @@ jobs:
       - name: Copy files to preview repository
         run: |
           # Remove existing files except .git
-          find preview-repo -mindepth 1 -name '.git' -prune -o -type f -delete
-          find preview-repo -mindepth 1 -name '.git' -prune -o -type d -empty -delete
+          find preview-repo -mindepth 1 -name '.git' -prune -o -type f -print0 | xargs -0 rm -f
+          find preview-repo -mindepth 1 -name '.git' -prune -o -type d -empty -print0 | xargs -0 rmdir 2>/dev/null || true
 
           # Copy all files except .github directory to prevent workflow recursion
           rsync -av --exclude='.git' --exclude='.github' --exclude='preview-repo' ./ preview-repo/
