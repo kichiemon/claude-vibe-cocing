@@ -1,5 +1,10 @@
 name: Deploy PR Preview
 
+# To enable automatic repository creation, add a REPO_PAT secret:
+# 1. Create a Personal Access Token with 'repo' permissions
+# 2. Add it as a repository secret named REPO_PAT
+# 3. Repository Settings → Secrets and variables → Actions → New repository secret
+
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -23,13 +28,20 @@ jobs:
 
       - name: Create preview repository
         run: |
-          echo "Note: Repository creation requires manual setup or PAT token with repo creation permissions"
-          echo "Skipping repository creation step"
+          if [ -n "${{ secrets.REPO_PAT }}" ]; then
+            echo "Creating repository with PAT token..."
+            gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository creation failed or already exists"
+          else
+            echo "REPO_PAT secret not found. Repository creation requires a Personal Access Token."
+            echo "Please add REPO_PAT secret with repo creation permissions."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Clone or initialize preview repository
         run: |
           git config --global credential.helper store
-          echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+          echo "https://x-access-token:${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
 
           # Try to clone existing repository
           if git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo; then
@@ -76,7 +88,7 @@ jobs:
             exit 1
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Enable GitHub Pages
         run: |
@@ -84,7 +96,7 @@ jobs:
             --field source='{"branch":"main","path":"/"}' \
             --field build_type="legacy" || echo "Pages already enabled or failed to enable"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Wait for deployment
         run: sleep 30
@@ -95,7 +107,7 @@ jobs:
           COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("🚀 **Preview deployed**")) | .id' | head -1)
           echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Update or create preview comment
         run: |
@@ -112,4 +124,4 @@ jobs:
             gh pr comment ${{ github.event.number }} --body "$COMMENT_BODY"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
