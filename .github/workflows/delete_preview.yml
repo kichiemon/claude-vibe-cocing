@@ -6,26 +6,28 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   delete-preview:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up preview repository name
-        run: |
-          echo "PREVIEW_REPO=claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete preview repository
+      - name: Delete preview directory
         run: |
-          gh repo delete ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --yes || echo "Repository not found or already deleted"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Add cleanup comment
-        run: |
-          gh pr comment ${{ github.event.number }} --body "🧹 **Preview cleaned up**
-
-          The preview repository has been deleted and the preview site is no longer available."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_PATH="pr-${{ github.event.number }}"
+          if [ -d "$PREVIEW_PATH" ]; then
+            rm -rf "$PREVIEW_PATH"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "Delete preview for PR #${{ github.event.number }}" || echo "No changes to commit"
+            git push origin gh-pages
+            echo "Preview deleted: $PREVIEW_PATH"
+          else
+            echo "Preview directory not found: $PREVIEW_PATH"
+          fi

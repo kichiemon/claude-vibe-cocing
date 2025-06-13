@@ -1,10 +1,5 @@
 name: Deploy PR Preview
 
-# To enable automatic repository creation, add a REPO_PAT secret:
-# 1. Create a Personal Access Token with 'repo' permissions
-# 2. Add it as a repository secret named REPO_PAT
-# 3. Repository Settings → Secrets and variables → Actions → New repository secret
-
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -12,91 +7,57 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  actions: write
 
 jobs:
   deploy-preview:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout PR
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Set up preview repository name
+      - name: Set up preview path
         run: |
-          echo "PREVIEW_REPO=claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
-          echo "PREVIEW_URL=https://${{ github.repository_owner }}.github.io/claude-vibe-cocing-pr-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "PREVIEW_PATH=pr-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "PREVIEW_URL=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-${{ github.event.number }}" >> $GITHUB_ENV
 
-      - name: Create preview repository
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update preview directory
         run: |
-          if [ -n "${{ secrets.REPO_PAT }}" ]; then
-            echo "Creating repository with PAT token..."
-            gh repo create ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} --public --description "Preview for PR #${{ github.event.number }}" || echo "Repository creation failed or already exists"
-          else
-            echo "REPO_PAT secret not found. Repository creation requires a Personal Access Token."
-            echo "Please add REPO_PAT secret with repo creation permissions."
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
-
-      - name: Clone or initialize preview repository
-        run: |
-          git config --global credential.helper store
-          echo "https://x-access-token:${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
-
-          # Try to clone existing repository
-          if git clone https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git preview-repo; then
-            echo "Successfully cloned existing repository"
-          else
-            echo "Repository not found. Please create repository manually: ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}"
-            echo "Creating local repository structure for now..."
-            mkdir preview-repo
-            cd preview-repo
-            git init
-            git remote add origin https://github.com/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}.git
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            echo "# Preview Repository" > README.md
-            git add README.md
-            git commit -m "Initial commit"
-            git branch -M main
-            cd ..
+          # Create preview directory
+          mkdir -p gh-pages/${{ env.PREVIEW_PATH }}
+          
+          # Copy files to preview directory (exclude .git, .github, and gh-pages directory)
+          rsync -av --exclude='.git' --exclude='.github' --exclude='gh-pages' --exclude='*.md' ./ gh-pages/${{ env.PREVIEW_PATH }}/
+          
+          # Create an index file if it doesn't exist
+          if [ ! -f "gh-pages/${{ env.PREVIEW_PATH }}/index.html" ]; then
+            cp gh-pages/${{ env.PREVIEW_PATH }}/* gh-pages/${{ env.PREVIEW_PATH }}/ 2>/dev/null || true
           fi
 
-      - name: Copy files to preview repository
+      - name: Commit and push to gh-pages
         run: |
-          # Remove existing files except .git
-          find preview-repo -mindepth 1 -name '.git' -prune -o -type f -print0 | xargs -0 rm -f
-          find preview-repo -mindepth 1 -name '.git' -prune -o -type d -empty -print0 | xargs -0 rmdir 2>/dev/null || true
-
-          # Copy all files except .github directory to prevent workflow recursion
-          rsync -av --exclude='.git' --exclude='.github' --exclude='preview-repo' ./ preview-repo/
-
-      - name: Commit and push to preview repository
-        run: |
-          cd preview-repo
+          cd gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           git commit -m "Deploy preview for PR #${{ github.event.number }}" || echo "No changes to commit"
-          
-          # Try to push
-          if git push origin main; then
-            echo "Successfully pushed to preview repository"
-          else
-            echo "Push failed. Please ensure the repository ${{ github.repository_owner }}/${{ env.PREVIEW_REPO }} exists and is accessible."
-            echo "You may need to create the repository manually on GitHub."
-            exit 1
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
+          git push origin gh-pages
 
-      - name: Enable GitHub Pages
+      - name: Enable GitHub Pages (if not already enabled)
         run: |
-          gh api -X POST /repos/${{ github.repository_owner }}/${{ env.PREVIEW_REPO }}/pages \
-            --field source='{"branch":"main","path":"/"}' \
+          gh api -X POST /repos/${{ github.repository }}/pages \
+            --field source='{"branch":"gh-pages","path":"/"}' \
             --field build_type="legacy" || echo "Pages already enabled or failed to enable"
         env:
-          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Wait for deployment
         run: sleep 30
@@ -107,7 +68,7 @@ jobs:
           COMMENT_ID=$(gh pr view ${{ github.event.number }} --json comments --jq '.comments[] | select(.body | contains("🚀 **Preview deployed**")) | .id' | head -1)
           echo "comment_id=$COMMENT_ID" >> $GITHUB_OUTPUT
         env:
-          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update or create preview comment
         run: |
@@ -124,4 +85,4 @@ jobs:
             gh pr comment ${{ github.event.number }} --body "$COMMENT_BODY"
           fi
         env:
-          GH_TOKEN: ${{ secrets.REPO_PAT || secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
