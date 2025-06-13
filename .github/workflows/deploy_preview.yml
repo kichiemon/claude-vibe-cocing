@@ -21,17 +21,56 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+          cache: 'npm'
 
-      - name: Install Japanese fonts and Playwright
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Cache system packages
+        uses: actions/cache@v4
+        id: apt-cache
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-fonts-${{ hashFiles('.github/workflows/deploy_preview.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-fonts-
+
+      - name: Install Japanese fonts
         run: |
-          # Install Japanese fonts
-          sudo apt-get update
+          # Only update if cache miss
+          if [ "${{ steps.apt-cache.outputs.cache-hit }}" != "true" ]; then
+            sudo apt-get update
+          fi
           sudo apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
-          
-          # Install Playwright
-          npm init -y
-          npm install playwright
-          npx playwright install chromium
+
+      - name: Setup package.json and install Playwright
+        run: |
+          # Create package.json with dependencies
+          cat > package.json << 'EOF'
+          {
+            "name": "preview-screenshot",
+            "version": "1.0.0",
+            "dependencies": {
+              "playwright": "^1.40.0"
+            }
+          }
+          EOF
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: |
+          # Only install browsers if cache miss
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" != "true" ]; then
+            npx playwright install chromium
+          fi
 
       - name: Take screenshot of HTML file
         run: |
