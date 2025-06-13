@@ -22,12 +22,31 @@ jobs:
           echo "PREVIEW_PATH=pr-${{ github.event.number }}" >> $GITHUB_ENV
           echo "PREVIEW_URL=https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/pr-${{ github.event.number }}" >> $GITHUB_ENV
 
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          path: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup gh-pages branch
+        run: |
+          # Configure git credentials
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+          
+          # Check if gh-pages branch exists
+          if git ls-remote --heads https://github.com/${{ github.repository }}.git gh-pages | grep -q gh-pages; then
+            echo "gh-pages branch exists, checking out..."
+            git clone --branch gh-pages --single-branch https://github.com/${{ github.repository }}.git gh-pages
+          else
+            echo "gh-pages branch does not exist, creating..."
+            mkdir gh-pages
+            cd gh-pages
+            git init
+            git remote add origin https://github.com/${{ github.repository }}.git
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            echo "# GitHub Pages" > README.md
+            git add README.md
+            git commit -m "Initial gh-pages commit"
+            git branch -M gh-pages
+            git push origin gh-pages
+            cd ..
+          fi
 
       - name: Create or update preview directory
         run: |
