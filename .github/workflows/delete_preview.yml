@@ -11,23 +11,20 @@ jobs:
   delete-preview:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v4
-        with:
-          ref: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete preview directory
+      - name: Delete preview screenshots
         run: |
-          PREVIEW_PATH="pr-${{ github.event.number }}"
-          if [ -d "$PREVIEW_PATH" ]; then
-            rm -rf "$PREVIEW_PATH"
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add .
-            git commit -m "Delete preview for PR #${{ github.event.number }}" || echo "No changes to commit"
-            git push origin gh-pages
-            echo "Preview deleted: $PREVIEW_PATH"
-          else
-            echo "Preview directory not found: $PREVIEW_PATH"
-          fi
+          # Find and delete releases with screenshots for this PR
+          PR_NUM="${{ github.event.number }}"
+          echo "Looking for screenshot releases for PR #$PR_NUM"
+          
+          # Get all releases and filter for screenshot releases for this PR
+          gh release list --json tagName,name | jq -r ".[] | select(.tagName | startswith(\"screenshot-pr-$PR_NUM-\")) | .tagName" | while read tag; do
+            if [ -n "$tag" ]; then
+              echo "Deleting release: $tag"
+              gh release delete "$tag" --yes || echo "Failed to delete release $tag"
+            fi
+          done
+          
+          echo "Screenshot cleanup completed for PR #$PR_NUM"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

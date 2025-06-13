@@ -140,21 +140,52 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Create GitHub Release for image hosting
+        id: upload-image
+        run: |
+          # Create a unique tag for this screenshot
+          TAG_NAME="screenshot-pr-${{ github.event.number }}-$(date +%s)"
+          
+          # Create a release to host the image
+          gh release create "$TAG_NAME" \
+            --title "Preview Screenshot for PR #${{ github.event.number }}" \
+            --notes "Automated screenshot for PR preview" \
+            --prerelease \
+            preview-screenshot.png
+          
+          # Get the download URL for the image
+          IMAGE_URL="https://github.com/${{ github.repository }}/releases/download/$TAG_NAME/preview-screenshot.png"
+          echo "image_url=$IMAGE_URL" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Successfully uploaded screenshot to: $IMAGE_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Update or create preview comment
         run: |
-          # Upload image to GitHub as an asset and get URL
           ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
           
-          COMMENT_BODY="📸 **Preview Screenshot**
+          if [ -n "${{ steps.upload-image.outputs.image_url }}" ]; then
+            COMMENT_BODY="📸 **Preview Screenshot**
 
           Here's how your changes look:
 
-          ![Preview](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts)
+          ![Preview Screenshot](${{ steps.upload-image.outputs.image_url }})
 
           📁 **[Download full screenshot]($ARTIFACT_URL)**
 
           > Screenshot taken automatically from PR #${{ github.event.number }}
           > Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          else
+            COMMENT_BODY="📸 **Preview Screenshot**
+
+          Screenshot has been generated but could not be embedded directly.
+
+          📁 **[Download screenshot]($ARTIFACT_URL)**
+
+          > Screenshot taken automatically from PR #${{ github.event.number }}
+          > Generated on: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          fi
 
           if [ -n "${{ steps.find-comment.outputs.comment_id }}" ]; then
             gh pr comment ${{ github.event.number }} --edit-last --body "$COMMENT_BODY"
