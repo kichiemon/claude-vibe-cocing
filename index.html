@@ -35,6 +35,107 @@
                     <button class="mood-btn" data-mood="peace">🕊️ 平穏</button>
                     <button class="mood-btn" data-mood="tough">💦 しんどい</button>
                 </div>
+
+                <!-- 気分強度スライダー -->
+                <div class="intensity-section" id="intensitySection" style="display: none;">
+                    <h3>気分の強度</h3>
+                    <div class="intensity-slider">
+                        <label for="intensitySlider">強度: <span id="intensityValue">5</span></label>
+                        <input type="range" min="1" max="10" value="5" id="intensitySlider">
+                        <div class="intensity-labels">
+                            <span>かすかに</span>
+                            <span>とても強く</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 複数気分選択 -->
+                <div class="multiple-mood-section" id="multipleMoodSection" style="display: none;">
+                    <h3>複数の気分を選択（複合的な感情）</h3>
+                    <div class="multiple-mood-toggle">
+                        <label>
+                            <input type="checkbox" id="enableMultipleMoods">
+                            複数の気分を同時に選択する
+                        </label>
+                    </div>
+                    <div class="mood-checkboxes" id="moodCheckboxes" style="display: none;">
+                        <!-- 動的に生成 -->
+                    </div>
+                    <div class="primary-mood-selector" id="primaryMoodSelector" style="display: none;">
+                        <label for="primaryMoodSelect">主要な気分を選択:</label>
+                        <select id="primaryMoodSelect">
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 持続時間記録 -->
+                <div class="duration-section" id="durationSection" style="display: none;">
+                    <h3>持続時間記録</h3>
+                    <div class="duration-tracker">
+                        <button id="startTracking" class="duration-btn">気分記録開始</button>
+                        <button id="stopTracking" class="duration-btn" style="display: none;">記録終了</button>
+                        <div class="duration-display">
+                            <span>継続時間: <span id="currentDuration">00:00</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 気分記録ボタン -->
+                <div class="record-section" id="recordSection" style="display: none;">
+                    <button id="recordMood" class="record-btn">気分を記録する</button>
+                </div>
+            </section>
+
+            <!-- カスタム気分作成エリア -->
+            <section class="custom-mood-section" id="customMoodSection">
+                <div class="custom-mood-header">
+                    <h2>カスタム気分管理</h2>
+                    <button id="toggleCustomMoodForm" class="toggle-btn">新しい気分を作成</button>
+                </div>
+                
+                <div class="custom-mood-creator" id="customMoodCreator" style="display: none;">
+                    <h3>カスタム気分を作成</h3>
+                    <form id="customMoodForm">
+                        <div class="form-group">
+                            <label for="customMoodName">気分名:</label>
+                            <input type="text" id="customMoodName" placeholder="例: わくわく" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customMoodEmoji">絵文字:</label>
+                            <input type="text" id="customMoodEmoji" placeholder="🌟" required>
+                        </div>
+                        <div class="form-group">
+                            <label>色（4色のパレット）:</label>
+                            <div class="color-inputs">
+                                <div class="color-input-group">
+                                    <input type="color" id="color1" value="#FF6B6B">
+                                    <input type="text" id="colorName1" placeholder="色名1" value="コーラル">
+                                </div>
+                                <div class="color-input-group">
+                                    <input type="color" id="color2" value="#4ECDC4">
+                                    <input type="text" id="colorName2" placeholder="色名2" value="ターコイズ">
+                                </div>
+                                <div class="color-input-group">
+                                    <input type="color" id="color3" value="#45B7D1">
+                                    <input type="text" id="colorName3" placeholder="色名3" value="スカイブルー">
+                                </div>
+                                <div class="color-input-group">
+                                    <input type="color" id="color4" value="#96CEB4">
+                                    <input type="text" id="colorName4" placeholder="色名4" value="ミント">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit">気分を作成</button>
+                            <button type="button" id="cancelCustomMood">キャンセル</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="custom-mood-list" id="customMoodList">
+                    <!-- カスタム気分リストが動的に生成される -->
+                </div>
             </section>
 
             <!-- カラーパレット表示エリア -->
