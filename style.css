@@ -673,3 +673,691 @@ header p {
         grid-template-columns: 1fr;
     }
 }
+
+/* Growth System Styles */
+
+.growth-system {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px var(--card-shadow);
+}
+
+.growth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.growth-header h2 {
+    color: var(--heading-color);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+/* User Stats Grid */
+.user-stats {
+    margin-bottom: 30px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 15px var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--card-hover-shadow);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+    background: var(--button-bg);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    font-weight: 500;
+}
+
+/* Mood Levels */
+.mood-levels {
+    margin-bottom: 30px;
+}
+
+.mood-levels h3 {
+    color: var(--heading-color);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.mood-level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.mood-level-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.mood-level-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--card-hover-shadow);
+}
+
+.mood-level-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.mood-emoji {
+    font-size: 1.5rem;
+}
+
+.mood-name {
+    font-weight: 600;
+    color: var(--heading-color);
+    flex: 1;
+    margin-left: 10px;
+}
+
+.mood-level {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.mood-level-progress {
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+[data-theme="dark"] .progress-bar {
+    background: #404040;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--button-bg);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.8rem;
+    color: var(--secondary-text-color);
+    text-align: center;
+}
+
+.mood-level-stats {
+    text-align: center;
+}
+
+.usage-count {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+}
+
+/* Achievements */
+.achievements {
+    margin-bottom: 30px;
+}
+
+.achievements h3 {
+    color: var(--heading-color);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.achievement-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px var(--card-shadow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--card-hover-shadow);
+}
+
+.achievement-card.unlocked {
+    border: 2px solid #4CAF50;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+}
+
+.achievement-card.available {
+    border: 2px solid #FF9800;
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-name {
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 5px;
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+}
+
+.achievement-status {
+    font-size: 1.5rem;
+}
+
+/* Badges */
+.badges {
+    margin-bottom: 30px;
+}
+
+.badges h3 {
+    color: var(--heading-color);
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.badge-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px var(--card-shadow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.badge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--card-hover-shadow);
+}
+
+.badge-card.unlocked {
+    border: 2px solid #FFD700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+}
+
+.badge-card.locked {
+    opacity: 0.5;
+}
+
+.badge-icon {
+    font-size: 2rem;
+    min-width: 40px;
+    text-align: center;
+}
+
+.badge-info {
+    flex: 1;
+}
+
+.badge-name {
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 5px;
+}
+
+.badge-description {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+}
+
+.badge-status {
+    font-size: 1.5rem;
+}
+
+/* Responsive Design for Growth System */
+@media (max-width: 768px) {
+    .growth-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .mood-level-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .badges-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+    
+    .achievement-card, .badge-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .mood-level-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .achievement-card, .badge-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+}
+
+/* Virtual Pet/Character Styles */
+
+.virtual-pet-section {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px var(--card-shadow);
+    text-align: center;
+}
+
+.pet-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.pet-display {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.3), transparent 50%);
+    pointer-events: none;
+}
+
+.pet-character {
+    font-size: 6rem;
+    margin-bottom: 15px;
+    animation: petIdle 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.pet-character:hover {
+    transform: scale(1.1);
+    animation: petHappy 0.8s ease-in-out;
+}
+
+.pet-character.evolving {
+    animation: evolveAnimation 2s ease-in-out;
+}
+
+.pet-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.pet-level {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    padding: 5px 15px;
+    border-radius: 15px;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+}
+
+.pet-stats {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.pet-stat {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 10px var(--card-shadow);
+}
+
+.stat-name {
+    font-weight: 600;
+    color: var(--heading-color);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.stat-bar {
+    width: 100%;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+[data-theme="dark"] .stat-bar {
+    background: #404040;
+}
+
+.stat-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.stat-fill.health {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+}
+
+.stat-fill.happiness {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+}
+
+.stat-fill.experience {
+    background: linear-gradient(135deg, #2196F3, #64B5F6);
+}
+
+.stat-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.stat-value {
+    font-size: 0.8rem;
+    color: var(--secondary-text-color);
+    text-align: right;
+}
+
+.pet-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.pet-action-btn {
+    background: var(--button-bg);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--button-shadow);
+    font-size: 0.9rem;
+}
+
+.pet-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--button-hover-shadow);
+}
+
+.pet-action-btn:active {
+    transform: scale(0.95);
+}
+
+.pet-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.pet-message {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 15px;
+    color: var(--text-color);
+    font-style: italic;
+    border-left: 4px solid var(--button-bg);
+    box-shadow: 0 2px 10px var(--card-shadow);
+    position: relative;
+}
+
+.pet-message::before {
+    content: '💭';
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: var(--card-bg);
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+}
+
+/* Character Evolution Stages */
+.pet-character[data-stage="egg"] {
+    filter: hue-rotate(0deg);
+}
+
+.pet-character[data-stage="baby"] {
+    filter: hue-rotate(60deg);
+}
+
+.pet-character[data-stage="child"] {
+    filter: hue-rotate(120deg);
+}
+
+.pet-character[data-stage="teen"] {
+    filter: hue-rotate(180deg);
+}
+
+.pet-character[data-stage="adult"] {
+    filter: hue-rotate(240deg);
+}
+
+.pet-character[data-stage="master"] {
+    filter: hue-rotate(300deg) brightness(1.2);
+}
+
+/* Animations */
+@keyframes petIdle {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes petHappy {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    50% { transform: scale(1.2); }
+    75% { transform: scale(1.1) rotate(5deg); }
+}
+
+@keyframes evolveAnimation {
+    0% { transform: scale(1); opacity: 1; }
+    25% { transform: scale(1.5); opacity: 0.7; }
+    50% { transform: scale(0.8) rotate(180deg); opacity: 0.5; }
+    75% { transform: scale(1.3) rotate(360deg); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.pet-character.feeding {
+    animation: feedingAnimation 1s ease-in-out;
+}
+
+@keyframes feedingAnimation {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.pet-character.playing {
+    animation: playingAnimation 1.5s ease-in-out;
+}
+
+@keyframes playingAnimation {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-10deg) scale(1.05); }
+    50% { transform: rotate(10deg) scale(1.1); }
+    75% { transform: rotate(-5deg) scale(1.05); }
+}
+
+/* Status Effects */
+.pet-character.happy {
+    filter: brightness(1.2) saturate(1.3);
+}
+
+.pet-character.sad {
+    filter: grayscale(0.3) brightness(0.8);
+}
+
+.pet-character.sleeping {
+    opacity: 0.7;
+    animation: sleeping 2s ease-in-out infinite;
+}
+
+@keyframes sleeping {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+/* Responsive Design for Pet */
+@media (max-width: 768px) {
+    .pet-display {
+        padding: 20px;
+    }
+    
+    .pet-character {
+        font-size: 4rem;
+    }
+    
+    .pet-name {
+        font-size: 1.3rem;
+    }
+    
+    .pet-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .pet-action-btn {
+        width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pet-character {
+        font-size: 3rem;
+    }
+    
+    .pet-name {
+        font-size: 1.1rem;
+    }
+    
+    .pet-level {
+        font-size: 0.9rem;
+    }
+    
+    .virtual-pet-section {
+        padding: 20px;
+    }
+}
