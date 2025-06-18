@@ -21,6 +21,55 @@
         </header>
 
         <main>
+            <!-- バーチャルペット/キャラクターエリア -->
+            <section class="virtual-pet-section" id="virtualPetSection">
+                <div class="pet-container">
+                    <div class="pet-display" id="petDisplay">
+                        <div class="pet-character" id="petCharacter">
+                            🥚
+                        </div>
+                        <div class="pet-name" id="petName">ムードちゃん</div>
+                        <div class="pet-level" id="petLevel">Lv.1</div>
+                    </div>
+                    
+                    <div class="pet-stats" id="petStats">
+                        <div class="pet-stat">
+                            <div class="stat-name">体力</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill health" id="petHealth" style="width: 100%"></div>
+                            </div>
+                            <div class="stat-value" id="petHealthValue">100/100</div>
+                        </div>
+                        
+                        <div class="pet-stat">
+                            <div class="stat-name">幸福度</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill happiness" id="petHappiness" style="width: 80%"></div>
+                            </div>
+                            <div class="stat-value" id="petHappinessValue">80/100</div>
+                        </div>
+                        
+                        <div class="pet-stat">
+                            <div class="stat-name">経験値</div>
+                            <div class="stat-bar">
+                                <div class="stat-fill experience" id="petExperience" style="width: 30%"></div>
+                            </div>
+                            <div class="stat-value" id="petExperienceValue">30/100</div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-actions" id="petActions">
+                        <button class="pet-action-btn" id="feedPetBtn" title="気分記録で餌をあげる">🍎 お世話</button>
+                        <button class="pet-action-btn" id="playWithPetBtn" title="キャラクターと遊ぶ">🎾 遊ぶ</button>
+                        <button class="pet-action-btn" id="petInfoBtn" title="詳細情報を見る">ℹ️ 詳細</button>
+                    </div>
+                    
+                    <div class="pet-message" id="petMessage">
+                        こんにちは！今日も気分を記録して一緒に成長しましょう！
+                    </div>
+                </div>
+            </section>
+
             <!-- 気分選択エリア -->
             <section class="mood-selection">
                 <h2>今の気分はどれですか？</h2>
@@ -135,6 +184,56 @@
 
                 <div class="custom-mood-list" id="customMoodList">
                     <!-- カスタム気分リストが動的に生成される -->
+                </div>
+            </section>
+
+            <!-- 育成システム表示エリア -->
+            <section class="growth-system" id="growthSystem">
+                <div class="growth-header">
+                    <h2>🌱 気分の成長</h2>
+                    <button id="toggleGrowthStats" class="toggle-btn">統計を表示</button>
+                </div>
+                
+                <div class="user-stats" id="userStatsDisplay">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalRecordsDisplay">0</div>
+                            <div class="stat-label">総記録数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="streakDaysDisplay">0</div>
+                            <div class="stat-label">連続記録日数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalExperienceDisplay">0</div>
+                            <div class="stat-label">総経験値</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="badgesCountDisplay">0</div>
+                            <div class="stat-label">獲得バッジ</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mood-levels" id="moodLevelsDisplay" style="display: none;">
+                    <h3>気分レベル</h3>
+                    <div class="mood-level-grid" id="moodLevelGrid">
+                        <!-- 気分レベルカードが動的に生成される -->
+                    </div>
+                </div>
+
+                <div class="achievements" id="achievementsDisplay" style="display: none;">
+                    <h3>🏅 達成実績</h3>
+                    <div class="achievements-grid" id="achievementsGrid">
+                        <!-- 達成実績が動的に生成される -->
+                    </div>
+                </div>
+
+                <div class="badges" id="badgesDisplay" style="display: none;">
+                    <h3>🏆 獲得バッジ</h3>
+                    <div class="badges-grid" id="badgesGrid">
+                        <!-- バッジが動的に生成される -->
+                    </div>
                 </div>
             </section>
 
