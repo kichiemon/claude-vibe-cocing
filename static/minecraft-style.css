@@ -1,0 +1,1211 @@
+:root {
+    /* Minecraft-themed color palette */
+    --main-bg: linear-gradient(135deg, #87CEEB 0%, #228B22 50%, #8B4513 100%);
+    --container-bg: rgba(139, 69, 19, 0.9);
+    --text-color: #2F4F2F;
+    --heading-color: #654321;
+    --header-text-color: white;
+    --header-text-shadow: rgba(0,0,0,0.5);
+    
+    /* Block-inspired colors */
+    --grass-green: #7CB342;
+    --stone-gray: #696969;
+    --wood-brown: #8B4513;
+    --diamond-blue: #00BFFF;
+    --gold-yellow: #FFD700;
+    --redstone-red: #DC143C;
+    --emerald-green: #50C878;
+    --lapis-blue: #1E90FF;
+    
+    /* UI Elements */
+    --button-bg: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+    --button-text-color: white;
+    --button-shadow: rgba(0,0,0,0.3);
+    --button-hover-shadow: rgba(0,0,0,0.5);
+    --active-button-bg: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+    --active-button-shadow: rgba(0,0,0,0.4);
+    
+    --card-bg: #F5DEB3;
+    --card-shadow: rgba(0,0,0,0.2);
+    --card-hover-shadow: rgba(0,0,0,0.3);
+    --notification-bg: #32CD32;
+    --notification-text-color: white;
+    --notification-shadow: rgba(0,0,0,0.3);
+    --secondary-text-color: #8B4513;
+    
+    /* Rarity colors */
+    --rarity-common: #FFFFFF;
+    --rarity-uncommon: #55FF55;
+    --rarity-rare: #5555FF;
+    --rarity-legendary: #AA00AA;
+    --rarity-ultimate: #FFAA00;
+}
+
+[data-theme="dark"] {
+    --main-bg: linear-gradient(135deg, #1a1a1a 0%, #2d2d30 50%, #3e3e42 100%);
+    --container-bg: rgba(45, 45, 48, 0.95);
+    --text-color: #d4d4d4;
+    --heading-color: #ffffff;
+    --header-text-color: #ffffff;
+    --header-text-shadow: rgba(0,0,0,0.7);
+    
+    --button-bg: linear-gradient(135deg, #3e3e42 0%, #007acc 100%);
+    --button-text-color: #ffffff;
+    --button-shadow: rgba(0,0,0,0.4);
+    --button-hover-shadow: rgba(0,0,0,0.6);
+    --active-button-bg: linear-gradient(135deg, #007acc 0%, #00d4ff 100%);
+    --active-button-shadow: rgba(0,0,0,0.5);
+    
+    --card-bg: #2d2d30;
+    --card-shadow: rgba(0,0,0,0.3);
+    --card-hover-shadow: rgba(0,0,0,0.4);
+    --notification-bg: #007acc;
+    --notification-text-color: #ffffff;
+    --notification-shadow: rgba(0,0,0,0.4);
+    --secondary-text-color: #9cdcfe;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Minecraft', 'Courier New', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--main-bg);
+    min-height: 100vh;
+    color: var(--text-color);
+    background-attachment: fixed;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--header-text-color);
+    background: rgba(0,0,0,0.3);
+    padding: 30px;
+    border-radius: 15px;
+    border: 3px solid var(--wood-brown);
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 6px var(--header-text-shadow);
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* Theme Selector */
+.theme-selector-container {
+    margin-top: 20px;
+}
+
+.theme-selector-container select {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: 2px solid var(--wood-brown);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Minecraft Character Section */
+.minecraft-character-section {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--wood-brown);
+}
+
+.character-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.character-display {
+    text-align: center;
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    border: 3px solid var(--stone-gray);
+}
+
+.minecraft-character {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    display: block;
+    animation: bobFloat 3s ease-in-out infinite;
+}
+
+@keyframes bobFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.character-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 8px;
+}
+
+.character-level {
+    font-size: 1.1rem;
+    color: var(--secondary-text-color);
+    font-weight: 600;
+}
+
+/* Player Stats */
+.player-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.stat-item {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 15px;
+    border: 2px solid var(--stone-gray);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-name {
+    font-weight: bold;
+    color: var(--heading-color);
+    font-size: 1rem;
+}
+
+.stat-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+    margin: 0 15px;
+    overflow: hidden;
+    border: 1px solid var(--stone-gray);
+}
+
+.stat-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.stat-fill.health { background: linear-gradient(90deg, #ff4444, #ff6666); }
+.stat-fill.hunger { background: linear-gradient(90deg, #ffaa00, #ffcc44); }
+.stat-fill.experience { background: linear-gradient(90deg, #00ff00, #44ff44); }
+
+.stat-value {
+    font-weight: bold;
+    color: var(--heading-color);
+    font-size: 0.9rem;
+}
+
+.stat-value-large {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    text-align: center;
+}
+
+/* Player Actions */
+.player-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px var(--button-shadow);
+    border: 2px solid var(--wood-brown);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px var(--button-hover-shadow);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px var(--button-shadow);
+}
+
+.mining-btn { background: linear-gradient(135deg, #696969, #A9A9A9); }
+.crafting-btn { background: linear-gradient(135deg, #8B4513, #CD853F); }
+.building-btn { background: linear-gradient(135deg, #FF6347, #FF7F50); }
+.inventory-btn { background: linear-gradient(135deg, #4682B4, #87CEEB); }
+
+/* Character Message */
+.character-message {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border: 3px solid var(--emerald-green);
+    text-align: center;
+}
+
+.message-display {
+    font-size: 1.1rem;
+    color: var(--heading-color);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Biome Selection */
+.biome-selection {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--grass-green);
+}
+
+.biome-selection h2 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: var(--header-text-color);
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.biome-selection-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--header-text-color);
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.biome-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.biome-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 12px;
+    padding: 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px var(--button-shadow);
+    border: 3px solid var(--wood-brown);
+    position: relative;
+}
+
+.biome-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px var(--button-hover-shadow);
+}
+
+.biome-btn.active {
+    background: var(--active-button-bg);
+    box-shadow: 0 8px 16px var(--active-button-shadow);
+    transform: translateY(-3px);
+}
+
+.biome-btn.locked {
+    background: linear-gradient(135deg, #666, #888);
+    cursor: not-allowed;
+    opacity: 0.6;
+    position: relative;
+}
+
+.biome-btn.locked::after {
+    content: "🔒";
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+}
+
+.biome-btn.unlocked {
+    background: linear-gradient(135deg, var(--grass-green), #90EE90);
+}
+
+/* Block Palette */
+.block-palette {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--diamond-blue);
+}
+
+.block-palette h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--header-text-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.block-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.block-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px var(--card-shadow);
+    border: 3px solid var(--stone-gray);
+    position: relative;
+    overflow: hidden;
+}
+
+.block-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px var(--card-hover-shadow);
+}
+
+.block-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    z-index: 0;
+    border-radius: 15px;
+}
+
+.block-texture {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.block-info {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.block-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 8px;
+}
+
+.block-rarity {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.rarity-common { background: var(--rarity-common); color: #333; }
+.rarity-uncommon { background: var(--rarity-uncommon); color: #333; }
+.rarity-rare { background: var(--rarity-rare); color: white; }
+.rarity-legendary { background: var(--rarity-legendary); color: white; }
+.rarity-ultimate { 
+    background: linear-gradient(45deg, var(--rarity-ultimate), #FF6600);
+    color: white;
+    animation: rarityShine 2s infinite;
+}
+
+@keyframes rarityShine {
+    0%, 100% { box-shadow: 0 0 5px var(--rarity-ultimate); }
+    50% { box-shadow: 0 0 20px var(--rarity-ultimate), 0 0 30px var(--rarity-ultimate); }
+}
+
+.block-durability {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    font-weight: 500;
+}
+
+/* Intensity Section */
+.intensity-section {
+    background: var(--container-bg);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 16px var(--card-shadow);
+    border: 3px solid var(--redstone-red);
+}
+
+.intensity-section h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--header-text-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.intensity-slider {
+    text-align: center;
+}
+
+.intensity-slider label {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--header-text-color);
+    margin-bottom: 15px;
+    display: block;
+}
+
+.intensity-slider input[type="range"] {
+    width: 100%;
+    max-width: 400px;
+    height: 8px;
+    background: var(--stone-gray);
+    border-radius: 4px;
+    outline: none;
+    margin: 15px 0;
+}
+
+.intensity-slider input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--redstone-red);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.intensity-labels {
+    display: flex;
+    justify-content: space-between;
+    color: var(--header-text-color);
+    font-size: 0.9rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Minecraft Games Section */
+.minecraft-games {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--gold-yellow);
+}
+
+.games-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.games-header h2 {
+    color: var(--header-text-color);
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.games-subtitle {
+    color: var(--header-text-color);
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.game-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px var(--card-shadow);
+    border: 3px solid var(--stone-gray);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px var(--card-hover-shadow);
+}
+
+.game-icon {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.game-card h3 {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 10px;
+}
+
+.game-card p {
+    color: var(--secondary-text-color);
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.game-difficulty {
+    font-size: 0.9rem;
+    color: var(--gold-yellow);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.game-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px var(--button-shadow);
+    border: 2px solid var(--wood-brown);
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px var(--button-hover-shadow);
+}
+
+/* Specialized game card colors */
+.mining-card { border-color: var(--stone-gray); }
+.building-card { border-color: var(--wood-brown); }
+.survival-card { border-color: var(--grass-green); }
+.redstone-card { border-color: var(--redstone-red); }
+.pvp-card { border-color: var(--diamond-blue); }
+.exploration-card { border-color: var(--emerald-green); }
+
+/* Game Play Area */
+.minecraft-game-area {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 30px;
+    box-shadow: 0 10px 20px var(--card-shadow);
+    border: 4px solid var(--lapis-blue);
+}
+
+.game-content {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.game-content h3 {
+    color: var(--heading-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.game-content p {
+    color: var(--secondary-text-color);
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+/* Mining Game Specific */
+.mining-area {
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+    height: 150px;
+    border: 3px solid var(--stone-gray);
+}
+
+.ore-vein {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    background: linear-gradient(90deg, #555, #777, #555);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.mining-cursor {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 40px;
+    background: var(--redstone-red);
+    box-shadow: 0 0 10px var(--redstone-red);
+    transition: left 0.05s linear;
+}
+
+.ore-target {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    animation: oreGlow 2s infinite;
+}
+
+@keyframes oreGlow {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.tool-durability {
+    text-align: center;
+}
+
+.durability-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    border: 2px solid var(--stone-gray);
+}
+
+.durability-bar div {
+    height: 100%;
+    background: linear-gradient(90deg, #ff4444, #ffaa00, #44ff44);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+/* Building Game */
+.building-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.blueprint, .construction-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    background: var(--stone-gray);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.blueprint-cell, .construction-cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.construction-cell:hover {
+    background: #f0f0f0;
+    transform: scale(1.1);
+}
+
+.block-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.block-option {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--stone-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.block-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.block-option.selected {
+    border-color: var(--gold-yellow);
+    box-shadow: 0 0 15px var(--gold-yellow);
+}
+
+/* Game Controls */
+.game-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.game-action-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 12px var(--button-shadow);
+    border: 3px solid var(--wood-brown);
+}
+
+.game-action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px var(--button-hover-shadow);
+}
+
+.game-action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px var(--button-shadow);
+}
+
+.game-score, .blocks-mined, .attempts {
+    background: var(--card-bg);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid var(--stone-gray);
+    font-weight: bold;
+    color: var(--heading-color);
+}
+
+.game-exit-btn {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid #a71e2a;
+    margin-top: 20px;
+}
+
+.game-exit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+}
+
+/* Effects and Animations */
+.mining-effect, .success-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--gold-yellow);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    animation: effectPop 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 100;
+}
+
+@keyframes effectPop {
+    0% { 
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1) translateY(-30px);
+    }
+}
+
+/* Particle Effects */
+.block-particle {
+    position: fixed;
+    font-size: 1.5rem;
+    pointer-events: none;
+    z-index: 1000;
+    animation: particleFloat 1s ease-out forwards;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) rotate(360deg) scale(0.5);
+    }
+}
+
+/* Inventory Section */
+.inventory-section {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--lapis-blue);
+}
+
+.inventory-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.tab-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--wood-brown);
+    border-bottom: none;
+}
+
+.tab-btn.active {
+    background: var(--active-button-bg);
+    transform: translateY(-3px);
+}
+
+.tab-content {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    border: 3px solid var(--stone-gray);
+}
+
+.inventory-grid, .crafting-recipes, .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* Progress System */
+.biome-progress-system {
+    background: var(--container-bg);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 35px var(--card-shadow);
+    border: 4px solid var(--emerald-green);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.progress-header h2 {
+    color: var(--header-text-color);
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.toggle-btn {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--wood-brown);
+}
+
+.toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--button-shadow);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 3px solid var(--stone-gray);
+    box-shadow: 0 6px 12px var(--card-shadow);
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--heading-color);
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-label {
+    font-size: 1rem;
+    color: var(--secondary-text-color);
+    font-weight: 600;
+}
+
+/* Biome Level Cards */
+.biome-level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.biome-level-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    border: 3px solid var(--stone-gray);
+    box-shadow: 0 6px 12px var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.biome-level-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px var(--card-hover-shadow);
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--notification-bg);
+    color: var(--notification-text-color);
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px var(--notification-shadow);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    font-weight: bold;
+    border: 2px solid var(--wood-brown);
+}
+
+.notification.show {
+    transform: translateX(0);
+}
+
+/* Record Button */
+.record-btn {
+    background: linear-gradient(135deg, var(--grass-green), #90EE90);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 20px 40px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px var(--button-shadow);
+    border: 3px solid var(--wood-brown);
+    margin: 20px auto;
+    display: block;
+}
+
+.record-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px var(--button-hover-shadow);
+}
+
+.record-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 12px var(--button-shadow);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .character-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .biome-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+    
+    .biome-btn {
+        padding: 15px;
+        font-size: 1rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .block-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .game-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .building-area {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .blueprint, .construction-grid {
+        justify-self: center;
+    }
+    
+    .inventory-tabs {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .tab-btn {
+        border-radius: 10px;
+        border: 2px solid var(--wood-brown);
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .biome-btn {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .minecraft-character {
+        font-size: 3rem;
+    }
+    
+    .block-texture {
+        font-size: 2.5rem;
+    }
+    
+    .game-icon {
+        font-size: 3rem;
+    }
+}
+
+/* Game Section */
+.game-section {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--stone-gray);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--wood-brown);
+    border-radius: 6px;
+    border: 2px solid var(--stone-gray);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--grass-green);
+}

@@ -164,9 +164,17 @@ header p {
 
 .mood-selection h2 {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     color: var(--heading-color);
     font-size: 1.5rem;
+}
+
+.mood-selection-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    color: var(--secondary-text-color);
+    font-size: 0.9rem;
+    font-style: italic;
 }
 
 .mood-buttons {
@@ -680,8 +688,8 @@ header p {
     left: 100%;
 }
 
-/* Custom Mood Section */
-.custom-mood-section {
+/* Pet Minigames Section */
+.pet-minigames {
     background: var(--container-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -706,26 +714,77 @@ header p {
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
 }
 
-.custom-mood-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.minigames-header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.custom-mood-header h2 {
+.minigames-header h2 {
     color: var(--heading-color);
     font-size: 1.5rem;
-    margin: 0;
+    margin-bottom: 10px;
 }
 
-.toggle-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 12px;
+.minigames-subtitle {
+    color: var(--secondary-text-color);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.minigames-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.minigame-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.minigame-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 
+        0 12px 40px var(--card-hover-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.minigame-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: bounceIcon 2s infinite;
+}
+
+.minigame-card h3 {
+    color: var(--heading-color);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.minigame-card p {
+    color: var(--secondary-text-color);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.minigame-btn, .toggle-btn {
     background: var(--button-bg);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
     color: var(--button-text-color);
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 
@@ -735,7 +794,7 @@ header p {
     overflow: hidden;
 }
 
-.toggle-btn::before {
+.minigame-btn::before, .toggle-btn::before {
     content: '';
     position: absolute;
     top: 0;
@@ -746,163 +805,385 @@ header p {
     transition: left 0.5s;
 }
 
-.toggle-btn:hover {
+.minigame-btn:hover, .toggle-btn:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: 
         0 6px 20px var(--button-hover-shadow),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-.toggle-btn:hover::before {
+.minigame-btn:hover::before, .toggle-btn:hover::before {
     left: 100%;
 }
 
-.custom-mood-creator {
+.minigame-play-area {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 30px;
+    color: white;
+    text-align: center;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.game-content {
     margin-bottom: 20px;
-}
-
-.custom-mood-creator h3 {
-    color: var(--heading-color);
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-color);
-    font-weight: 500;
-}
-
-.form-group input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: var(--card-bg);
-    color: var(--text-color);
-}
-
-.color-inputs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.color-input-group {
+    min-height: 200px;
     display: flex;
-    gap: 10px;
     align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
 
-.color-input-group input[type="color"] {
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.game-controls {
+    margin-bottom: 20px;
 }
 
-.color-input-group input[type="text"] {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: var(--card-bg);
-    color: var(--text-color);
-}
-
-.form-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.form-actions button {
+.game-exit-btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
     padding: 10px 20px;
-    border: none;
-    border-radius: 10px;
+    border-radius: 15px;
+    color: white;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.form-actions button[type="submit"] {
-    background: var(--active-button-bg);
-    color: var(--button-text-color);
-}
-
-.form-actions button[type="button"] {
-    background: #6c757d;
-    color: white;
-}
-
-.form-actions button:hover {
+.game-exit-btn:hover {
+    background: rgba(255,255,255,0.3);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-/* Custom Mood List */
-.custom-mood-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
+/* Enhanced Animations */
+@keyframes bounceIcon {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
 }
 
-.custom-mood-item {
-    background: var(--card-bg);
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0; transform: scale(0); }
+    50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+/* Game-specific animations */
+.feeding-animation {
+    animation: feedingBounce 0.8s ease-in-out;
+}
+
+@keyframes feedingBounce {
+    0%, 100% { transform: scale(1); }
+    25% { transform: scale(1.1) rotate(-2deg); }
+    50% { transform: scale(1.2); }
+    75% { transform: scale(1.1) rotate(2deg); }
+}
+
+.music-animation {
+    animation: musicDance 1s ease-in-out infinite;
+}
+
+@keyframes musicDance {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-5px) rotate(-2deg); }
+    50% { transform: translateX(0) rotate(0deg); }
+    75% { transform: translateX(5px) rotate(2deg); }
+}
+
+.memory-animation {
+    animation: memoryGlow 0.5s ease-in-out;
+}
+
+@keyframes memoryGlow {
+    0%, 100% { box-shadow: 0 0 0 rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.8); }
+}
+
+.treasure-animation {
+    animation: treasureShine 1.5s ease-in-out infinite;
+}
+
+@keyframes treasureShine {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3) drop-shadow(0 0 10px gold); }
+}
+
+/* Special effect particles */
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #FFD700;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatUp 2s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0.5);
+    }
+}
+
+.success-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #4CAF50;
+    font-size: 2rem;
+    font-weight: bold;
+    animation: successPop 1s ease-out forwards;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+@keyframes successPop {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+}
+
+/* Enhanced pet character animations */
+.pet-character.super-happy {
+    animation: superHappyDance 1s ease-in-out;
+}
+
+@keyframes superHappyDance {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-10deg); }
+    50% { transform: scale(1.2) rotate(0deg); }
+    75% { transform: scale(1.1) rotate(10deg); }
+}
+
+.pet-character.level-up {
+    animation: levelUpEffect 2s ease-in-out;
+}
+
+@keyframes levelUpEffect {
+    0% { transform: scale(1); filter: brightness(1); }
+    25% { transform: scale(1.3); filter: brightness(1.5) drop-shadow(0 0 15px gold); }
+    50% { transform: scale(1.1); filter: brightness(1.8) drop-shadow(0 0 20px gold); }
+    75% { transform: scale(1.2); filter: brightness(1.3) drop-shadow(0 0 10px gold); }
+    100% { transform: scale(1); filter: brightness(1); }
+}
+
+.pet-character.evolution-ready {
+    animation: evolutionPulse 2s ease-in-out infinite;
+}
+
+@keyframes evolutionPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        filter: brightness(1) hue-rotate(0deg);
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    50% { 
+        transform: scale(1.1); 
+        filter: brightness(1.2) hue-rotate(180deg);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* Minigame-specific styles */
+.feeding-target {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pet-hungry {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    animation: feedingBounce 1s ease-in-out infinite;
+}
+
+.food-meter {
+    width: 300px;
+    height: 20px;
+    background: #e0e0e0;
     border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 2px 10px var(--card-shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 2px solid #fff;
 }
 
-.custom-mood-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.food-bar {
+    height: 100%;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    transition: width 0.1s ease;
 }
 
-.custom-mood-emoji {
-    font-size: 1.5rem;
+.music-notes {
+    height: 150px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
 }
 
-.custom-mood-name {
-    font-weight: 600;
-    color: var(--heading-color);
+.falling-note {
+    position: absolute;
+    top: 20px;
+    font-size: 2rem;
+    color: #FFD700;
+    animation: notefall 2s linear infinite;
 }
 
-.custom-mood-actions {
-    display: flex;
-    gap: 5px;
+@keyframes notefall {
+    from { top: -30px; }
+    to { top: 150px; }
 }
 
-.custom-mood-actions button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.memory-cell {
+    width: 120px;
+    height: 120px;
+    background: rgba(255,255,255,0.2);
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 15px;
     cursor: pointer;
-    font-size: 0.8rem;
+    transition: all 0.3s ease;
 }
 
-.edit-btn {
-    background: #ffc107;
-    color: #000;
+.memory-cell:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
 }
 
-.delete-btn {
-    background: #dc3545;
+.memory-cell.memory-active {
+    background: #FFD700 !important;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+
+.treasure-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.treasure-cell {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.2);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.treasure-cell:hover {
+    background: rgba(255,255,255,0.3);
+    transform: scale(1.05);
+}
+
+.treasure-cell.revealed {
+    background: rgba(255,255,255,0.5);
+    cursor: not-allowed;
+}
+
+.treasure-cell.treasure-found {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    animation: treasureShine 1s ease-in-out infinite;
+}
+
+.game-action-btn {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid white;
+    padding: 15px 30px;
+    border-radius: 25px;
     color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+}
+
+.game-action-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-2px);
+}
+
+.game-score, .attempts {
+    color: white;
+    font-weight: 600;
+    margin: 10px;
+    font-size: 1.1rem;
 }
 
 /* Responsive Design for New Features */
 @media (max-width: 768px) {
-    .custom-mood-header {
+    .minigames-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .food-meter {
+        width: 250px;
+    }
+    
+    .memory-cell {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .treasure-cell {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
         flex-direction: column;
         gap: 10px;
         align-items: stretch;
@@ -1493,6 +1774,48 @@ header p {
     transform: none;
 }
 
+/* Pet Conversation System */
+.pet-conversation {
+    margin-top: 20px;
+}
+
+.conversation-history {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    display: none;
+}
+
+.conversation-entry {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+.conversation-entry.user {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    margin-left: 20px;
+    text-align: right;
+}
+
+.conversation-entry.pet {
+    background: rgba(var(--button-bg), 0.1);
+    color: var(--text-color);
+    margin-right: 20px;
+    border-left: 3px solid var(--button-bg);
+}
+
+.conversation-entry .timestamp {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 5px;
+}
+
 .pet-message {
     background: var(--card-bg);
     border-radius: 15px;
@@ -1502,6 +1825,7 @@ header p {
     border-left: 4px solid var(--button-bg);
     box-shadow: 0 2px 10px var(--card-shadow);
     position: relative;
+    margin-bottom: 15px;
 }
 
 .pet-message::before {
@@ -1513,6 +1837,43 @@ header p {
     padding: 5px;
     border-radius: 50%;
     font-size: 1.2rem;
+}
+
+.conversation-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.conversation-option {
+    background: var(--card-bg);
+    border: 2px solid var(--button-bg);
+    border-radius: 15px;
+    padding: 12px 15px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.conversation-option:hover {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--button-shadow);
+}
+
+.conversation-option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.conversation-option.disabled:hover {
+    transform: none;
+    background: var(--card-bg);
+    color: var(--text-color);
 }
 
 /* Character Evolution Stages */
@@ -1645,4 +2006,892 @@ header p {
     .virtual-pet-section {
         padding: 20px;
     }
+}
+
+/* 拡張された育成システムの新しいアニメーション */
+
+/* 特殊進化エフェクト */
+.special-evolution-glow {
+    animation: special-evolution-pulse 3s ease-in-out;
+    position: relative;
+}
+
+@keyframes special-evolution-pulse {
+    0% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    25% {
+        transform: scale(1.2);
+        filter: brightness(1.5) saturate(1.5);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    }
+    50% {
+        transform: scale(1.3);
+        filter: brightness(2) saturate(2);
+        box-shadow: 0 0 50px rgba(255, 215, 0, 1);
+    }
+    75% {
+        transform: scale(1.2);
+        filter: brightness(1.5) saturate(1.5);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+        box-shadow: none;
+    }
+}
+
+/* 遺伝的特性覚醒エフェクト */
+.genetic-activation-effect {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: genetic-sparkle 2s ease-out forwards;
+}
+
+@keyframes genetic-sparkle {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+/* 達成実績通知スタイル */
+.achievement-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+    color: #333;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 10000;
+    animation: achievement-slide-in 0.5s ease-out;
+    max-width: 350px;
+    border: 2px solid #ffd700;
+}
+
+.achievement-notification .achievement-icon {
+    font-size: 2rem;
+    animation: achievement-bounce 2s infinite;
+}
+
+.achievement-notification .achievement-content {
+    flex: 1;
+}
+
+.achievement-notification .achievement-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.achievement-notification .achievement-description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+@keyframes achievement-slide-in {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes achievement-bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+/* 性格特性グローバルスタイル */
+.personality-trait-high {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.personality-trait-medium {
+    color: #FF9800;
+}
+
+.personality-trait-low {
+    color: #f44336;
+}
+
+/* 遺伝的多様性インジケーター */
+.genetic-diversity-indicator {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.genetic-trait-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.genetic-trait-badge.rare {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+    color: #333;
+}
+
+.genetic-trait-badge.legendary {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    color: white;
+}
+
+/* 特殊進化段階インジケーター */
+.evolution-rarity-indicator {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.evolution-rarity-indicator.common {
+    background: #95a5a6;
+    color: white;
+}
+
+.evolution-rarity-indicator.rare {
+    background: #3498db;
+    color: white;
+}
+
+.evolution-rarity-indicator.legendary {
+    background: #f39c12;
+    color: white;
+    animation: legendary-glow 2s infinite;
+}
+
+.evolution-rarity-indicator.ultimate {
+    background: linear-gradient(45deg, #e74c3c, #8e44ad, #3498db, #f39c12);
+    background-size: 400% 400%;
+    color: white;
+    animation: ultimate-rainbow 2s ease-in-out infinite, legendary-glow 2s infinite;
+}
+
+@keyframes legendary-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.8);
+    }
+}
+
+@keyframes ultimate-rainbow {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 特殊能力リスト */
+.special-abilities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.special-ability-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.special-ability-tag::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: ability-shine 3s infinite;
+}
+
+@keyframes ability-shine {
+    0% {
+        left: -100%;
+    }
+    50%, 100% {
+        left: 100%;
+    }
+}
+
+/* 強化されたペット統計表示 */
+.enhanced-pet-stats {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.personality-matrix-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.personality-trait-item {
+    text-align: center;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.personality-trait-name {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.personality-trait-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .achievement-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .personality-matrix-display {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .genetic-diversity-indicator {
+        justify-content: center;
+    }
+}
+
+/* 高難易度モード専用スタイル */
+
+/* チャレンジモードとハードコアモードのボタン */
+.challenge-btn {
+    background: linear-gradient(135deg, #ff9500 0%, #ff6b00 100%) !important;
+    border: 2px solid #ff8500;
+    animation: challenge-pulse 2s infinite;
+}
+
+.hardcore-btn {
+    background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%) !important;
+    border: 2px solid #ff0000;
+    animation: hardcore-danger 3s infinite;
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.5);
+}
+
+@keyframes challenge-pulse {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(255, 149, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 15px rgba(255, 149, 0, 0.8);
+    }
+}
+
+@keyframes hardcore-danger {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(220, 20, 60, 0.5);
+    }
+    33% {
+        box-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
+    }
+    66% {
+        box-shadow: 0 0 30px rgba(255, 0, 0, 1);
+    }
+}
+
+/* 高難易度ステータスバー */
+.stat-fill.stress {
+    background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%);
+}
+
+.stat-fill.discipline {
+    background: linear-gradient(90deg, #74b9ff 0%, #0984e3 100%);
+}
+
+.stat-fill.resilience {
+    background: linear-gradient(90deg, #00b894 0%, #00a085 100%);
+}
+
+/* チャレンジモード有効時の視覚効果 */
+.challenge-mode-active {
+    border: 2px solid #ff9500;
+    box-shadow: 0 0 20px rgba(255, 149, 0, 0.3);
+    background: linear-gradient(135deg, rgba(255, 149, 0, 0.1) 0%, rgba(255, 107, 0, 0.1) 100%);
+}
+
+/* ハードコアモード有効時の視覚効果 */
+.hardcore-mode-active {
+    border: 2px solid #dc143c;
+    box-shadow: 0 0 30px rgba(220, 20, 60, 0.5);
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.1) 0%, rgba(139, 0, 0, 0.1) 100%);
+}
+
+/* 危機状態の警告表示 */
+.pet-crisis-warning {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(220, 20, 60, 0.2);
+    border: 3px solid #dc143c;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #dc143c;
+    font-weight: bold;
+    animation: crisis-flash 1s infinite;
+    z-index: 100;
+}
+
+@keyframes crisis-flash {
+    0%, 50%, 100% {
+        opacity: 0.8;
+    }
+    25%, 75% {
+        opacity: 1;
+    }
+}
+
+/* 完璧主義者モード専用UI */
+.perfectionist-mode {
+    border: 2px solid #ffd700;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+}
+
+.perfect-day-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #ffd700 0%, #ffb300 100%);
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    animation: perfect-glow 2s infinite;
+}
+
+@keyframes perfect-glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* 失敗ペナルティの表示 */
+.failure-penalty {
+    background: rgba(220, 20, 60, 0.1);
+    border: 1px solid #dc143c;
+    color: #dc143c;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    animation: penalty-shake 0.5s ease-in-out;
+}
+
+@keyframes penalty-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* 高レベル進化の特別エフェクト */
+.transcendent-evolution {
+    position: relative;
+    overflow: hidden;
+}
+
+.transcendent-evolution::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: transcendent-rotate 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes transcendent-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 難易度レベル表示 */
+.difficulty-indicator {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.difficulty-1 { color: #2ecc71; }
+.difficulty-2 { color: #f1c40f; }
+.difficulty-3 { color: #e67e22; }
+.difficulty-4 { color: #e74c3c; }
+.difficulty-5 { color: #9b59b6; }
+.difficulty-6 { color: #34495e; }
+.difficulty-7 { color: #c0392b; }
+.difficulty-8 { color: #8e44ad; }
+.difficulty-9 { color: #2c3e50; }
+.difficulty-10 { 
+    background: linear-gradient(45deg, #e74c3c, #8e44ad, #3498db, #f39c12);
+    background-size: 400% 400%;
+    animation: ultimate-rainbow 2s ease-in-out infinite;
+}
+
+/* Minecraft-themed glassmorphism styling */
+.minecraft-character-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.character-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.character-display {
+    text-align: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.minecraft-character {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: bounceIcon 2s infinite;
+}
+
+.character-name, .character-level {
+    font-weight: 600;
+    color: var(--heading-color);
+}
+
+.player-stats {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.stat-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.stat-fill.health {
+    background: linear-gradient(90deg, #ff6b6b, #ee5a52);
+}
+
+.stat-fill.hunger {
+    background: linear-gradient(90deg, #ffa726, #ff9800);
+}
+
+.stat-fill.experience {
+    background: linear-gradient(90deg, #66bb6a, #4caf50);
+}
+
+.player-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.action-btn {
+    background: var(--button-bg);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--button-shadow);
+    font-size: 0.9rem;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--button-hover-shadow);
+}
+
+.character-message {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
+
+.biome-selection {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.biome-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.biome-btn {
+    background: var(--button-bg);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--button-shadow);
+}
+
+.biome-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--button-hover-shadow);
+}
+
+.biome-btn.locked {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--secondary-text-color);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.biome-btn.locked:hover {
+    transform: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.game-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.game-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 
+        0 12px 40px var(--card-hover-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    animation: bounceIcon 2s infinite;
+}
+
+.game-btn {
+    background: var(--active-button-bg);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--active-button-shadow);
+    margin-top: 15px;
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--active-button-shadow);
+}
+
+.minecraft-games {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.inventory-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.inventory-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 10px 20px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.tab-btn.active {
+    background: var(--button-bg);
+    color: var(--button-text-color);
+}
+
+.world-map-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.record-btn {
+    background: var(--active-button-bg);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 30px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--active-button-shadow);
+    font-size: 1rem;
+}
+
+.record-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--active-button-shadow);
+}
+
+.intensity-section {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.intensity-slider input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.block-palette {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.block-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.exploration-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.exploration-stats .stat-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    text-align: center;
+}
+
+.game-difficulty {
+    font-size: 0.9rem;
+    color: var(--secondary-text-color);
+    margin-bottom: 15px;
+}
+
+.minecraft-game-area {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 20px;
+    backdrop-filter: blur(15px);
+    box-shadow: 
+        0 8px 32px var(--card-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.game-exit-btn {
+    background: var(--button-bg);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: var(--button-text-color);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px var(--button-shadow);
+    margin-top: 20px;
+}
+
+.game-exit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--button-hover-shadow);
 }
