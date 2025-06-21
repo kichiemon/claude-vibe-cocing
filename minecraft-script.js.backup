@@ -1,0 +1,1424 @@
+// Minecraft-style biome blocks with their mood associations
+const minecraftBlocks = {
+    plains: {
+        name: '平原バイオーム',
+        blocks: [
+            { name: '草ブロック', texture: '🟢', durability: 1, rarity: 'common', craftable: ['サバイバルシェルター'] },
+            { name: '土ブロック', texture: '🟤', durability: 1, rarity: 'common', craftable: ['基本建材'] },
+            { name: '石ブロック', texture: '⬜', durability: 3, rarity: 'common', craftable: ['石の道具'] },
+            { name: '木材', texture: '🟫', durability: 2, rarity: 'common', craftable: ['木の道具', '作業台'] }
+        ],
+        mood: 'peaceful',
+        color: '#7CB342'
+    },
+    forest: {
+        name: '森林バイオーム',
+        blocks: [
+            { name: 'オークの原木', texture: '🌳', durability: 3, rarity: 'common', craftable: ['高級建材'] },
+            { name: 'シラカバの原木', texture: '🌲', durability: 3, rarity: 'uncommon', craftable: ['装飾材'] },
+            { name: '苗木', texture: '🌱', durability: 1, rarity: 'uncommon', craftable: ['森の再生'] },
+            { name: 'キノコ', texture: '🍄', durability: 1, rarity: 'rare', craftable: ['魔法のポーション'] }
+        ],
+        mood: 'creative',
+        color: '#4CAF50'
+    },
+    mountain: {
+        name: '山岳バイオーム',
+        blocks: [
+            { name: '石炭鉱石', texture: '⚫', durability: 4, rarity: 'uncommon', craftable: ['燃料'] },
+            { name: '鉄鉱石', texture: '🔸', durability: 5, rarity: 'uncommon', craftable: ['鉄の道具'] },
+            { name: '金鉱石', texture: '🟡', durability: 6, rarity: 'rare', craftable: ['金の道具'] },
+            { name: 'ダイヤモンド鉱石', texture: '💎', durability: 10, rarity: 'legendary', craftable: ['最強装備'] }
+        ],
+        mood: 'focused',
+        color: '#795548'
+    },
+    ocean: {
+        name: '海洋バイオーム',
+        blocks: [
+            { name: '海草', texture: '🌿', durability: 1, rarity: 'common', craftable: ['水中呼吸薬'] },
+            { name: '珊瑚', texture: '🪸', durability: 2, rarity: 'uncommon', craftable: ['装飾品'] },
+            { name: 'プリズマリン', texture: '💠', durability: 5, rarity: 'rare', craftable: ['海底神殿'] },
+            { name: '海の心', texture: '💙', durability: 15, rarity: 'legendary', craftable: ['海神の力'] }
+        ],
+        mood: 'relaxed',
+        color: '#03A9F4'
+    },
+    desert: {
+        name: '砂漠バイオーム',
+        blocks: [
+            { name: '砂ブロック', texture: '🟨', durability: 1, rarity: 'common', craftable: ['ガラス'] },
+            { name: 'サボテン', texture: '🌵', durability: 2, rarity: 'uncommon', craftable: ['染料'] },
+            { name: '砂岩', texture: '🟧', durability: 3, rarity: 'uncommon', craftable: ['建築材'] },
+            { name: 'エメラルド', texture: '💚', durability: 8, rarity: 'rare', craftable: ['交易アイテム'] }
+        ],
+        mood: 'energetic',
+        color: '#FFC107'
+    },
+    nether: {
+        name: 'ネザーバイオーム',
+        blocks: [
+            { name: 'ネザーラック', texture: '🔴', durability: 1, rarity: 'uncommon', craftable: ['永続燃焼'] },
+            { name: 'グロウストーン', texture: '🟡', durability: 3, rarity: 'rare', craftable: ['明るい照明'] },
+            { name: 'ネザークォーツ', texture: '⚪', durability: 5, rarity: 'rare', craftable: ['レッドストーン回路'] },
+            { name: 'ネザライト', texture: '🖤', durability: 20, rarity: 'legendary', craftable: ['最終装備'] }
+        ],
+        mood: 'intense',
+        color: '#D32F2F'
+    },
+    end: {
+        name: 'エンドバイオーム',
+        blocks: [
+            { name: 'エンドストーン', texture: '🟢', durability: 4, rarity: 'rare', craftable: ['エンド建築'] },
+            { name: 'コーラスフルーツ', texture: '🟣', durability: 2, rarity: 'rare', craftable: ['テレポート薬'] },
+            { name: 'エンドロッド', texture: '⭐', durability: 6, rarity: 'rare', craftable: ['エンド照明'] },
+            { name: 'ドラゴンエッグ', texture: '🥚', durability: 50, rarity: 'ultimate', craftable: ['ドラゴン召喚'] }
+        ],
+        mood: 'transcendent',
+        color: '#9C27B0'
+    },
+    village: {
+        name: '村バイオーム',
+        blocks: [
+            { name: '農作物', texture: '🌾', durability: 1, rarity: 'common', craftable: ['食料'] },
+            { name: 'パン', texture: '🍞', durability: 1, rarity: 'common', craftable: ['回復アイテム'] },
+            { name: '取引台', texture: '📦', durability: 5, rarity: 'uncommon', craftable: ['村人取引'] },
+            { name: 'エンチャント本', texture: '📚', durability: 10, rarity: 'legendary', craftable: ['最強エンチャント'] }
+        ],
+        mood: 'social',
+        color: '#8BC34A'
+    }
+};
+
+class MinecraftVibeCrafting {
+    constructor() {
+        this.currentBiome = null;
+        this.currentIntensity = 5;
+        this.miningRecords = [];
+        this.activeMining = new Map();
+        
+        // Minecraft-style game system properties
+        this.biomeProgress = {};
+        this.playerStats = {
+            totalBlocks: 0,
+            miningStreak: 0,
+            lastMiningDate: null,
+            achievements: [],
+            totalExperience: 0,
+            playerLevel: 1,
+            health: 20,
+            hunger: 20,
+            inventory: {},
+            tools: {
+                pickaxe: { level: 'wood', durability: 59, efficiency: 1 },
+                shovel: { level: 'wood', durability: 59, efficiency: 1 },
+                axe: { level: 'wood', durability: 59, efficiency: 1 }
+            }
+        };
+
+        // Advanced Minecraft creature system
+        this.minecraftCreature = {
+            name: 'スティーブ',
+            level: 1,
+            experience: 0,
+            health: 20,
+            hunger: 20,
+            dimension: 'overworld',
+            gameMode: 'survival',
+            
+            stats: {
+                miningSpeed: 1.0,
+                damage: 2.0,
+                defense: 0,
+                luck: 0,
+                efficiency: 1.0
+            },
+            
+            equipment: {
+                helmet: null,
+                chestplate: null,
+                leggings: null,
+                boots: null,
+                mainHand: { type: 'wooden_pickaxe', durability: 59 },
+                offHand: null
+            },
+            
+            achievements: {
+                gettingWood: false,
+                benchmarking: false,
+                timeToMine: false,
+                hotStuff: false,
+                acquireHardware: false,
+                diamonds: false,
+                enterTheNether: false,
+                theEnd: false
+            },
+            
+            worldData: {
+                spawnPoint: { x: 0, y: 64, z: 0 },
+                currentPosition: { x: 0, y: 64, z: 0 },
+                exploredBiomes: ['plains'],
+                structuresFound: [],
+                mobsEncountered: [],
+                timePlayed: 0
+            },
+            
+            buildingProjects: [],
+            redstoneKnowledge: 0,
+            farmingLevel: 0,
+            combatLevel: 0
+        };
+
+        // Crafting recipes system
+        this.craftingRecipes = {
+            'wooden_pickaxe': {
+                materials: { '木材': 3, '棒': 2 },
+                result: { type: 'tool', name: 'wooden_pickaxe', durability: 59 },
+                category: 'tools'
+            },
+            'stone_pickaxe': {
+                materials: { '石ブロック': 3, '棒': 2 },
+                result: { type: 'tool', name: 'stone_pickaxe', durability: 131 },
+                category: 'tools'
+            },
+            'iron_pickaxe': {
+                materials: { '鉄鉱石': 3, '棒': 2 },
+                result: { type: 'tool', name: 'iron_pickaxe', durability: 250 },
+                category: 'tools'
+            },
+            'diamond_pickaxe': {
+                materials: { 'ダイヤモンド鉱石': 3, '棒': 2 },
+                result: { type: 'tool', name: 'diamond_pickaxe', durability: 1561 },
+                category: 'tools'
+            }
+        };
+
+        // Advanced minigame system
+        this.minecraftGames = {
+            mining: { name: 'マイニングチャレンジ', difficulty: 2, rewards: ['鉱石', '経験値'] },
+            building: { name: 'ビルディングコンテスト', difficulty: 4, rewards: ['建築スキル', 'クリエイティブポイント'] },
+            survival: { name: 'サバイバルチャレンジ', difficulty: 6, rewards: ['サバイバルスキル', '希少アイテム'] },
+            redstone: { name: 'レッドストーンパズル', difficulty: 8, rewards: ['レッドストーン知識', '回路設計図'] },
+            pvp: { name: 'PvPアリーナ', difficulty: 10, rewards: ['戦闘スキル', 'チャンピオンタイトル'] }
+        };
+
+        // Theme-related properties
+        this.themeSelector = document.getElementById('themeSelector');
+        this.darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.loadMinecraftData();
+        const preferredTheme = this.loadThemePreference();
+        this.applyTheme(preferredTheme);
+    }
+
+    // Data Management Methods
+    loadMinecraftData() {
+        const savedRecords = localStorage.getItem('miningRecords');
+        const savedBiomeProgress = localStorage.getItem('biomeProgress');
+        const savedPlayerStats = localStorage.getItem('playerStats');
+        const savedCreature = localStorage.getItem('minecraftCreature');
+        
+        if (savedRecords) {
+            this.miningRecords = JSON.parse(savedRecords);
+        }
+        
+        if (savedBiomeProgress) {
+            this.biomeProgress = JSON.parse(savedBiomeProgress);
+        }
+        
+        if (savedPlayerStats) {
+            this.playerStats = { ...this.playerStats, ...JSON.parse(savedPlayerStats) };
+        }
+        
+        if (savedCreature) {
+            this.minecraftCreature = { ...this.minecraftCreature, ...JSON.parse(savedCreature) };
+        }
+        
+        this.initializeBiomeProgress();
+    }
+
+    saveMinecraftData() {
+        localStorage.setItem('miningRecords', JSON.stringify(this.miningRecords));
+        localStorage.setItem('biomeProgress', JSON.stringify(this.biomeProgress));
+        localStorage.setItem('playerStats', JSON.stringify(this.playerStats));
+        localStorage.setItem('minecraftCreature', JSON.stringify(this.minecraftCreature));
+    }
+
+    initializeBiomeProgress() {
+        Object.keys(minecraftBlocks).forEach(biome => {
+            if (!this.biomeProgress[biome]) {
+                this.biomeProgress[biome] = {
+                    level: 1,
+                    experience: 0,
+                    blocksFound: 0,
+                    unlocked: biome === 'plains'
+                };
+            }
+        });
+    }
+
+    // Core Minecraft gameplay methods
+    handleBiomeSelection(biome) {
+        this.currentBiome = biome;
+        this.updateActiveBiome(biome);
+        this.displayBlockPalette(biome);
+        this.showMinecraftOptions();
+    }
+
+    updateActiveBiome(selectedBiome) {
+        const biomeButtons = document.querySelectorAll('.biome-btn');
+        biomeButtons.forEach(button => {
+            button.classList.remove('active');
+            if (button.dataset.biome === selectedBiome) {
+                button.classList.add('active');
+            }
+        });
+    }
+
+    displayBlockPalette(biome) {
+        const biomeData = minecraftBlocks[biome];
+        const paletteSection = document.getElementById('blockPalette');
+        const paletteTitle = document.getElementById('paletteTitle');
+        const blockGrid = document.getElementById('blockGrid');
+
+        paletteTitle.textContent = `${biomeData.name}のブロック`;
+        
+        blockGrid.innerHTML = '';
+        
+        biomeData.blocks.forEach(block => {
+            const blockCard = this.createBlockCard(block);
+            blockGrid.appendChild(blockCard);
+        });
+
+        paletteSection.classList.add('show');
+    }
+
+    createBlockCard(block) {
+        const card = document.createElement('div');
+        card.className = `block-card rarity-${block.rarity}`;
+        card.addEventListener('click', () => this.collectBlock(block));
+
+        const rarityClass = this.getRarityClass(block.rarity);
+        
+        card.innerHTML = `
+            <div class="block-texture">${block.texture}</div>
+            <div class="block-info">
+                <div class="block-name">${block.name}</div>
+                <div class="block-rarity ${rarityClass}">${this.getRarityName(block.rarity)}</div>
+                <div class="block-durability">耐久度: ${block.durability}</div>
+            </div>
+        `;
+
+        return card;
+    }
+
+    getRarityClass(rarity) {
+        const rarityClasses = {
+            'common': 'rarity-common',
+            'uncommon': 'rarity-uncommon',
+            'rare': 'rarity-rare',
+            'legendary': 'rarity-legendary',
+            'ultimate': 'rarity-ultimate'
+        };
+        return rarityClasses[rarity] || 'rarity-common';
+    }
+
+    getRarityName(rarity) {
+        const rarityNames = {
+            'common': 'コモン',
+            'uncommon': 'アンコモン',
+            'rare': 'レア',
+            'legendary': 'レジェンダリー',
+            'ultimate': 'アルティメット'
+        };
+        return rarityNames[rarity] || 'コモン';
+    }
+
+    collectBlock(block) {
+        // Add to inventory
+        const blockName = block.name;
+        if (!this.playerStats.inventory[blockName]) {
+            this.playerStats.inventory[blockName] = 0;
+        }
+        this.playerStats.inventory[blockName]++;
+        
+        // Add experience
+        const expGain = this.calculateExpGain(block);
+        this.playerStats.totalExperience += expGain;
+        
+        // Update stats
+        this.playerStats.totalBlocks++;
+        this.updateBiomeProgress(this.currentBiome, expGain);
+        
+        // Show collection notification
+        this.showCollectionNotification(block, expGain);
+        
+        // Check achievements
+        this.checkMinecraftAchievements();
+        
+        // Save data
+        this.saveMinecraftData();
+    }
+
+    calculateExpGain(block) {
+        const rarityMultiplier = {
+            'common': 1,
+            'uncommon': 2,
+            'rare': 5,
+            'legendary': 15,
+            'ultimate': 50
+        };
+        
+        const baseExp = 10;
+        const multiplier = rarityMultiplier[block.rarity] || 1;
+        const intensityBonus = Math.floor(this.currentIntensity * 2);
+        
+        return baseExp * multiplier + intensityBonus;
+    }
+
+    updateBiomeProgress(biome, expGain) {
+        if (this.biomeProgress[biome]) {
+            this.biomeProgress[biome].experience += expGain;
+            this.biomeProgress[biome].blocksFound++;
+            this.checkBiomeLevelUp(biome);
+        }
+    }
+
+    checkBiomeLevelUp(biome) {
+        const biomeData = this.biomeProgress[biome];
+        const requiredExp = this.getRequiredExperience(biomeData.level);
+        
+        if (biomeData.experience >= requiredExp) {
+            biomeData.level++;
+            biomeData.experience -= requiredExp;
+            this.showBiomeLevelUpNotification(biome, biomeData.level);
+            this.unlockNewBiomes(biome, biomeData.level);
+        }
+    }
+
+    getRequiredExperience(level) {
+        return Math.floor(100 * Math.pow(1.5, level - 1));
+    }
+
+    showBiomeLevelUpNotification(biome, newLevel) {
+        const biomeName = minecraftBlocks[biome]?.name || biome;
+        const notification = document.getElementById('notification');
+        notification.textContent = `🎉 ${biomeName} がレベル ${newLevel} にアップしました！`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    unlockNewBiomes(currentBiome, level) {
+        const unlockMap = {
+            'plains': { level: 3, unlocks: ['forest', 'desert'] },
+            'forest': { level: 5, unlocks: ['mountain'] },
+            'mountain': { level: 7, unlocks: ['ocean'] },
+            'desert': { level: 5, unlocks: ['nether'] },
+            'nether': { level: 10, unlocks: ['end'] },
+            'ocean': { level: 8, unlocks: ['village'] }
+        };
+
+        const unlockData = unlockMap[currentBiome];
+        if (unlockData && level >= unlockData.level) {
+            unlockData.unlocks.forEach(biome => {
+                if (!this.biomeProgress[biome].unlocked) {
+                    this.biomeProgress[biome].unlocked = true;
+                    this.showBiomeUnlockNotification(biome);
+                }
+            });
+        }
+    }
+
+    showBiomeUnlockNotification(biome) {
+        const biomeName = minecraftBlocks[biome]?.name || biome;
+        const notification = document.getElementById('notification');
+        notification.textContent = `🗺️ 新しいバイオーム解放: ${biomeName}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    showCollectionNotification(block, expGain) {
+        const notification = document.getElementById('notification');
+        notification.textContent = `${block.texture} ${block.name} を入手！ (+${expGain} EXP)`;
+        notification.classList.add('show');
+        
+        // Create particle effect
+        this.createBlockParticleEffect(block);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 2000);
+    }
+
+    createBlockParticleEffect(block) {
+        const character = document.getElementById('minecraftCharacter');
+        if (!character) return;
+        
+        const rect = character.getBoundingClientRect();
+        
+        for (let i = 0; i < 5; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'block-particle';
+            particle.textContent = block.texture;
+            particle.style.left = (rect.left + rect.width/2) + 'px';
+            particle.style.top = (rect.top + rect.height/2) + 'px';
+            particle.style.animationDelay = (i * 0.1) + 's';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+    }
+
+    // Enhanced Minecraft minigames
+    startMinecraftGame(gameType) {
+        this.currentGame = gameType;
+        this.gameScore = 0;
+        
+        const gameArea = document.getElementById('minecraftGameArea');
+        const gameContent = document.getElementById('gameContent');
+        const gameControls = document.getElementById('gameControls');
+        
+        gameArea.style.display = 'block';
+        
+        switch(gameType) {
+            case 'mining':
+                this.startMiningGame(gameContent, gameControls);
+                break;
+            case 'building':
+                this.startBuildingGame(gameContent, gameControls);
+                break;
+            case 'survival':
+                this.startSurvivalGame(gameContent, gameControls);
+                break;
+            case 'redstone':
+                this.startRedstoneGame(gameContent, gameControls);
+                break;
+            case 'pvp':
+                this.startPvPGame(gameContent, gameControls);
+                break;
+        }
+    }
+
+    startMiningGame(content, controls) {
+        content.innerHTML = `
+            <h3>⛏️ マイニングチャレンジ</h3>
+            <p>正確なタイミングでブロックを掘ろう！</p>
+            <div class="mining-area">
+                <div class="ore-vein" id="oreVein">
+                    <div class="mining-cursor" id="miningCursor"></div>
+                    <div class="ore-target" id="oreTarget">💎</div>
+                </div>
+                <div class="tool-durability">
+                    <div class="durability-bar" id="durabilityBar"></div>
+                    <span>ツール耐久度</span>
+                </div>
+            </div>
+        `;
+        
+        controls.innerHTML = `
+            <button class="game-action-btn" id="mineBtn">⛏️ 掘る</button>
+            <div class="game-score">スコア: <span id="gameScore">0</span></div>
+            <div class="blocks-mined">ブロック: <span id="blocksMined">0</span></div>
+        `;
+
+        let cursorPosition = 0;
+        let direction = 1;
+        let targetPosition = Math.random() * 80 + 10;
+        let toolDurability = 100;
+        let blocksMined = 0;
+        
+        const gameInterval = setInterval(() => {
+            cursorPosition += direction * 3;
+            if (cursorPosition >= 100) {
+                cursorPosition = 100;
+                direction = -1;
+            } else if (cursorPosition <= 0) {
+                cursorPosition = 0;
+                direction = 1;
+            }
+            
+            document.getElementById('miningCursor').style.left = cursorPosition + '%';
+        }, 50);
+
+        document.getElementById('mineBtn').addEventListener('click', () => {
+            const accuracy = 100 - Math.abs(cursorPosition - targetPosition);
+            toolDurability -= 5;
+            
+            if (accuracy > 70) {
+                const points = Math.floor(accuracy * 2);
+                this.gameScore += points;
+                blocksMined++;
+                
+                // Create new target
+                targetPosition = Math.random() * 80 + 10;
+                document.getElementById('oreTarget').style.left = targetPosition + '%';
+                
+                this.showMiningEffect('Perfect! ⛏️✨');
+            } else if (accuracy > 40) {
+                this.gameScore += 10;
+                this.showMiningEffect('Good! 🪨');
+            } else {
+                this.showMiningEffect('Miss! 💥');
+            }
+            
+            document.getElementById('gameScore').textContent = this.gameScore;
+            document.getElementById('blocksMined').textContent = blocksMined;
+            document.getElementById('durabilityBar').style.width = toolDurability + '%';
+            
+            if (toolDurability <= 0) {
+                clearInterval(gameInterval);
+                this.endMinecraftGame('ツールが壊れました！');
+            }
+        });
+
+        setTimeout(() => {
+            clearInterval(gameInterval);
+            this.endMinecraftGame('時間終了！');
+        }, 30000);
+    }
+
+    startBuildingGame(content, controls) {
+        content.innerHTML = `
+            <h3>🏗️ ビルディングチャレンジ</h3>
+            <p>パターンに従って正確に建築しよう！</p>
+            <div class="building-area">
+                <div class="blueprint" id="blueprint"></div>
+                <div class="construction-grid" id="constructionGrid"></div>
+            </div>
+        `;
+        
+        controls.innerHTML = `
+            <div class="block-selector" id="blockSelector">
+                <div class="block-option" data-block="🟫">🟫</div>
+                <div class="block-option" data-block="🟢">🟢</div>
+                <div class="block-option" data-block="🔴">🔴</div>
+                <div class="block-option" data-block="🟦">🟦</div>
+            </div>
+            <div class="game-score">完成度: <span id="gameScore">0</span>%</div>
+        `;
+
+        const gridSize = 5;
+        const pattern = this.generateBuildingPattern(gridSize);
+        const playerConstruction = Array(gridSize).fill().map(() => Array(gridSize).fill('⬜'));
+        
+        this.renderBuildingBlueprint(pattern);
+        this.renderConstructionGrid(playerConstruction, gridSize);
+        
+        let selectedBlock = '🟫';
+        
+        document.querySelectorAll('.block-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                selectedBlock = e.target.dataset.block;
+                document.querySelectorAll('.block-option').forEach(opt => opt.classList.remove('selected'));
+                e.target.classList.add('selected');
+            });
+        });
+        
+        document.querySelectorAll('.construction-cell').forEach((cell, index) => {
+            cell.addEventListener('click', () => {
+                const row = Math.floor(index / gridSize);
+                const col = index % gridSize;
+                playerConstruction[row][col] = selectedBlock;
+                cell.textContent = selectedBlock;
+                
+                const accuracy = this.calculateBuildingAccuracy(pattern, playerConstruction);
+                document.getElementById('gameScore').textContent = Math.floor(accuracy);
+                
+                if (accuracy >= 100) {
+                    this.endMinecraftGame('完璧な建築！🏆');
+                }
+            });
+        });
+    }
+
+    generateBuildingPattern(size) {
+        const blocks = ['🟫', '🟢', '🔴', '🟦'];
+        return Array(size).fill().map(() => 
+            Array(size).fill().map(() => blocks[Math.floor(Math.random() * blocks.length)])
+        );
+    }
+
+    renderBuildingBlueprint(pattern) {
+        const blueprint = document.getElementById('blueprint');
+        blueprint.innerHTML = '';
+        
+        pattern.forEach(row => {
+            row.forEach(block => {
+                const cell = document.createElement('div');
+                cell.className = 'blueprint-cell';
+                cell.textContent = block;
+                blueprint.appendChild(cell);
+            });
+        });
+    }
+
+    renderConstructionGrid(construction, size) {
+        const grid = document.getElementById('constructionGrid');
+        grid.innerHTML = '';
+        
+        construction.forEach((row, rowIndex) => {
+            row.forEach((block, colIndex) => {
+                const cell = document.createElement('div');
+                cell.className = 'construction-cell';
+                cell.textContent = block;
+                grid.appendChild(cell);
+            });
+        });
+    }
+
+    calculateBuildingAccuracy(pattern, construction) {
+        let matches = 0;
+        let total = 0;
+        
+        for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < pattern[i].length; j++) {
+                total++;
+                if (pattern[i][j] === construction[i][j]) {
+                    matches++;
+                }
+            }
+        }
+        
+        return (matches / total) * 100;
+    }
+
+    showMiningEffect(message) {
+        const effect = document.createElement('div');
+        effect.className = 'mining-effect';
+        effect.textContent = message;
+        document.getElementById('gameContent').appendChild(effect);
+        
+        setTimeout(() => {
+            effect.remove();
+        }, 1000);
+    }
+
+    endMinecraftGame(message) {
+        const reward = Math.floor(this.gameScore / 10);
+        this.playerStats.totalExperience += reward;
+        this.minecraftCreature.experience += reward;
+        
+        // Add blocks to inventory based on game type
+        if (this.currentGame === 'mining') {
+            const blocksGained = Math.floor(this.gameScore / 50);
+            if (!this.playerStats.inventory['stone']) this.playerStats.inventory['stone'] = 0;
+            this.playerStats.inventory['stone'] += blocksGained;
+        }
+        
+        this.updateCreatureMessage(`ゲームクリア！${reward}経験値をゲットしました！`);
+        this.checkPlayerLevelUp();
+        this.saveMinecraftData();
+        
+        setTimeout(() => {
+            this.exitMinecraftGame();
+        }, 2000);
+    }
+
+    exitMinecraftGame() {
+        document.getElementById('minecraftGameArea').style.display = 'none';
+        this.currentGame = null;
+        this.gameScore = 0;
+    }
+
+    checkMinecraftAchievements() {
+        const achievements = [
+            {
+                id: 'getting_wood',
+                name: '木を手に入れる',
+                description: '初めて木材を入手しました',
+                condition: () => this.playerStats.inventory['木材'] >= 1
+            },
+            {
+                id: 'stone_age',
+                name: '石器時代',
+                description: '石のツールを作成しました',
+                condition: () => this.playerStats.inventory['石ブロック'] >= 10
+            },
+            {
+                id: 'iron_age',
+                name: '鉄器時代',
+                description: '鉄のツールを作成しました',
+                condition: () => this.playerStats.inventory['鉄鉱石'] >= 5
+            },
+            {
+                id: 'diamonds',
+                name: 'ダイヤモンド！',
+                description: 'ダイヤモンドを発見しました',
+                condition: () => this.playerStats.inventory['ダイヤモンド鉱石'] >= 1
+            },
+            {
+                id: 'master_miner',
+                name: 'マスターマイナー',
+                description: '1000個のブロックを採掘しました',
+                condition: () => this.playerStats.totalBlocks >= 1000
+            }
+        ];
+
+        achievements.forEach(achievement => {
+            if (!this.playerStats.achievements.includes(achievement.id) && achievement.condition()) {
+                this.playerStats.achievements.push(achievement.id);
+                this.showAchievementNotification(achievement);
+            }
+        });
+    }
+
+    showAchievementNotification(achievement) {
+        const notification = document.getElementById('notification');
+        notification.textContent = `🏅 実績解除: ${achievement.name}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 4000);
+    }
+
+    updateCreatureMessage(message) {
+        const messageElement = document.getElementById('creatureMessage');
+        if (messageElement) {
+            messageElement.textContent = message;
+        }
+    }
+
+    checkPlayerLevelUp() {
+        const requiredExp = this.getRequiredExperience(this.playerStats.playerLevel);
+        
+        if (this.playerStats.totalExperience >= requiredExp) {
+            this.playerStats.playerLevel++;
+            this.showPlayerLevelUpNotification();
+        }
+    }
+
+    showPlayerLevelUpNotification() {
+        const notification = document.getElementById('notification');
+        notification.textContent = `🎉 プレイヤーレベルアップ！ Lv.${this.playerStats.playerLevel}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Theme management
+    applyTheme(theme) {
+        let activeTheme = theme;
+        if (theme === 'system') {
+            activeTheme = this.darkModeMediaQuery.matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = activeTheme;
+        if (this.themeSelector) {
+            this.themeSelector.value = theme;
+        }
+    }
+
+    saveThemePreference(theme) {
+        localStorage.setItem('themePreference', theme);
+    }
+
+    loadThemePreference() {
+        return localStorage.getItem('themePreference') || 'system';
+    }
+
+    showMinecraftOptions() {
+        const intensitySection = document.getElementById('intensitySection');
+        const gameSection = document.getElementById('gameSection');
+        const inventorySection = document.getElementById('inventorySection');
+        
+        [intensitySection, gameSection, inventorySection].forEach(section => {
+            if (section) {
+                section.style.display = 'block';
+            }
+        });
+    }
+
+    // Event binding
+    bindEvents() {
+        // Original biome events
+        const biomeButtons = document.querySelectorAll('.biome-btn');
+        biomeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const biome = e.target.dataset.biome;
+                if (this.biomeProgress[biome]?.unlocked) {
+                    this.handleBiomeSelection(biome);
+                } else {
+                    this.showLockedBiomeMessage(biome);
+                }
+            });
+        });
+
+        // Theme events
+        if (this.themeSelector) {
+            this.themeSelector.addEventListener('change', (e) => {
+                const selectedTheme = e.target.value;
+                this.saveThemePreference(selectedTheme);
+                this.applyTheme(selectedTheme);
+            });
+        }
+
+        // Game events
+        const gameButtons = [
+            { id: 'startMiningGame', game: 'mining' },
+            { id: 'startBuildingGame', game: 'building' },
+            { id: 'startSurvivalGame', game: 'survival' },
+            { id: 'startRedstoneGame', game: 'redstone' },
+            { id: 'startPvPGame', game: 'pvp' }
+        ];
+        
+        gameButtons.forEach(({ id, game }) => {
+            const button = document.getElementById(id);
+            if (button) {
+                button.addEventListener('click', () => this.startMinecraftGame(game));
+            }
+        });
+        
+        const exitGameBtn = document.getElementById('exitGame');
+        if (exitGameBtn) {
+            exitGameBtn.addEventListener('click', () => this.exitMinecraftGame());
+        }
+
+        // Bind additional Minecraft-specific events
+        this.bindMinecraftEvents();
+
+        // Initialize displays
+        this.renderPlayerStats();
+        this.renderCreatureDisplay();
+        this.updateBiomeButtons();
+    }
+
+    recordCurrentMining() {
+        if (!this.currentBiome) {
+            this.showNotification('先にバイオームを選択してください');
+            return;
+        }
+
+        // Simulate a mining session
+        const biomeData = minecraftBlocks[this.currentBiome];
+        const randomBlock = biomeData.blocks[Math.floor(Math.random() * biomeData.blocks.length)];
+        
+        this.collectBlock(randomBlock);
+        this.showNotification(`${randomBlock.texture} ${randomBlock.name} を採掘しました！`);
+    }
+
+    showNotification(message) {
+        const notification = document.getElementById('notification');
+        if (notification) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    }
+
+    renderInventory() {
+        const inventoryGrid = document.getElementById('inventoryGrid');
+        if (!inventoryGrid) return;
+        
+        inventoryGrid.innerHTML = '';
+        
+        Object.entries(this.playerStats.inventory).forEach(([itemName, count]) => {
+            const itemCard = document.createElement('div');
+            itemCard.className = 'inventory-item';
+            itemCard.innerHTML = `
+                <div class="item-icon">${this.getItemIcon(itemName)}</div>
+                <div class="item-name">${itemName}</div>
+                <div class="item-count">${count}</div>
+            `;
+            inventoryGrid.appendChild(itemCard);
+        });
+    }
+
+    getItemIcon(itemName) {
+        const iconMap = {
+            '草ブロック': '🟢',
+            '土ブロック': '🟤',
+            '石ブロック': '⬜',
+            '木材': '🟫',
+            'オークの原木': '🌳',
+            'シラカバの原木': '🌲',
+            '苗木': '🌱',
+            'キノコ': '🍄',
+            '石炭鉱石': '⚫',
+            '鉄鉱石': '🔸',
+            '金鉱石': '🟡',
+            'ダイヤモンド鉱石': '💎',
+            '海草': '🌿',
+            '珊瑚': '🪸',
+            'プリズマリン': '💠',
+            '海の心': '💙',
+            '砂ブロック': '🟨',
+            'サボテン': '🌵',
+            '砂岩': '🟧',
+            'エメラルド': '💚',
+            'ネザーラック': '🔴',
+            'グロウストーン': '🟡',
+            'ネザークォーツ': '⚪',
+            'ネザライト': '🖤',
+            'エンドストーン': '🟢',
+            'コーラスフルーツ': '🟣',
+            'エンドロッド': '⭐',
+            'ドラゴンエッグ': '🥚',
+            '農作物': '🌾',
+            'パン': '🍞',
+            '取引台': '📦',
+            'エンチャント本': '📚'
+        };
+        return iconMap[itemName] || '📦';
+    }
+
+    // Enhanced survival games
+    startSurvivalGame(content, controls) {
+        content.innerHTML = `
+            <h3>🛡️ サバイバルチャレンジ</h3>
+            <p>限られた資源で生き残り、夜をしのごう！</p>
+            <div class="survival-area">
+                <div class="day-night-cycle" id="dayNightCycle">
+                    <div class="sun" id="sun">☀️</div>
+                    <div class="time-display" id="timeDisplay">昼間</div>
+                </div>
+                <div class="resource-management">
+                    <div class="resource-bar">
+                        <span>食料:</span>
+                        <div class="bar"><div class="fill" id="foodBar" style="width: 100%"></div></div>
+                    </div>
+                    <div class="resource-bar">
+                        <span>体力:</span>
+                        <div class="bar"><div class="fill" id="healthBar" style="width: 100%"></div></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        controls.innerHTML = `
+            <button class="game-action-btn" id="gatherFood">🍎 食料収集</button>
+            <button class="game-action-btn" id="buildShelter">🏠 シェルター建設</button>
+            <button class="game-action-btn" id="craftTools">🔨 道具作成</button>
+            <div class="game-score">生存日数: <span id="gameScore">0</span></div>
+        `;
+
+        let food = 100;
+        let health = 100;
+        let dayCount = 0;
+        let isNight = false;
+        
+        const survivalInterval = setInterval(() => {
+            // Simulate day/night cycle
+            dayCount += 0.1;
+            if (Math.floor(dayCount * 2) % 2 === 1 && !isNight) {
+                isNight = true;
+                document.getElementById('timeDisplay').textContent = '夜';
+                document.getElementById('sun').textContent = '🌙';
+                // Night dangers
+                health -= 5;
+                food -= 10;
+            } else if (Math.floor(dayCount * 2) % 2 === 0 && isNight) {
+                isNight = false;
+                document.getElementById('timeDisplay').textContent = '昼間';
+                document.getElementById('sun').textContent = '☀️';
+            }
+            
+            // Update bars
+            food = Math.max(0, food - 1);
+            if (food < 20) health -= 2;
+            
+            document.getElementById('foodBar').style.width = food + '%';
+            document.getElementById('healthBar').style.width = health + '%';
+            document.getElementById('gameScore').textContent = Math.floor(dayCount);
+            
+            if (health <= 0) {
+                clearInterval(survivalInterval);
+                this.endMinecraftGame('体力が尽きました！生存日数: ' + Math.floor(dayCount));
+            }
+        }, 500);
+
+        document.getElementById('gatherFood').addEventListener('click', () => {
+            food = Math.min(100, food + 20);
+            this.gameScore += 5;
+        });
+
+        document.getElementById('buildShelter').addEventListener('click', () => {
+            if (isNight) health = Math.min(100, health + 15);
+            this.gameScore += 10;
+        });
+
+        document.getElementById('craftTools').addEventListener('click', () => {
+            food = Math.min(100, food + 10);
+            this.gameScore += 8;
+        });
+
+        setTimeout(() => {
+            clearInterval(survivalInterval);
+            this.endMinecraftGame('サバイバル完了！');
+        }, 30000);
+    }
+
+    startRedstoneGame(content, controls) {
+        content.innerHTML = `
+            <h3>🔴 レッドストーンパズル</h3>
+            <p>回路を正しく接続してランプを点灯させよう！</p>
+            <div class="redstone-circuit" id="redstoneCircuit">
+                <div class="circuit-grid" id="circuitGrid">
+                    ${Array.from({length: 25}, (_, i) => 
+                        `<div class="circuit-cell" data-index="${i}"></div>`
+                    ).join('')}
+                </div>
+                <div class="target-lamps" id="targetLamps">
+                    <div class="lamp" id="lamp1">💡</div>
+                    <div class="lamp" id="lamp2">💡</div>
+                    <div class="lamp" id="lamp3">💡</div>
+                </div>
+            </div>
+        `;
+        
+        controls.innerHTML = `
+            <div class="redstone-tools">
+                <button class="tool-btn" data-tool="wire">🔴 ワイヤー</button>
+                <button class="tool-btn" data-tool="repeater">🔄 リピーター</button>
+                <button class="tool-btn" data-tool="switch">🔘 スイッチ</button>
+            </div>
+            <button class="game-action-btn" id="testCircuit">⚡ 回路テスト</button>
+            <div class="game-score">正解数: <span id="gameScore">0</span></div>
+        `;
+
+        let selectedTool = 'wire';
+        let circuit = Array(25).fill(null);
+        
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                selectedTool = e.target.dataset.tool;
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('selected'));
+                e.target.classList.add('selected');
+            });
+        });
+
+        document.querySelectorAll('.circuit-cell').forEach((cell, index) => {
+            cell.addEventListener('click', () => {
+                circuit[index] = selectedTool;
+                cell.textContent = selectedTool === 'wire' ? '—' : selectedTool === 'repeater' ? '🔄' : '🔘';
+                cell.className = `circuit-cell ${selectedTool}`;
+            });
+        });
+
+        document.getElementById('testCircuit').addEventListener('click', () => {
+            // Simple circuit validation
+            const hasSwitch = circuit.includes('switch');
+            const hasWire = circuit.includes('wire');
+            const hasRepeater = circuit.includes('repeater');
+            
+            if (hasSwitch && hasWire) {
+                this.gameScore += 25;
+                document.getElementById('gameScore').textContent = this.gameScore;
+                this.showMiningEffect('回路成功！ ⚡');
+                
+                // Light up lamps
+                document.querySelectorAll('.lamp').forEach(lamp => {
+                    lamp.style.color = '#ffff00';
+                    lamp.style.textShadow = '0 0 10px #ffff00';
+                });
+                
+                setTimeout(() => {
+                    this.endMinecraftGame('レッドストーン回路完成！');
+                }, 2000);
+            } else {
+                this.showMiningEffect('回路不完全 💥');
+            }
+        });
+    }
+
+    startPvPGame(content, controls) {
+        content.innerHTML = `
+            <h3>⚔️ PvPアリーナ</h3>
+            <p>戦略的に攻撃と防御を使い分けて勝利しよう！</p>
+            <div class="pvp-arena">
+                <div class="player-status">
+                    <div class="player player-1">
+                        <div class="player-name">あなた</div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="playerHealth" style="width: 100%"></div>
+                        </div>
+                        <div class="player-avatar">👷‍♂️</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="player player-2">
+                        <div class="player-name">対戦相手</div>
+                        <div class="health-bar">
+                            <div class="health-fill" id="enemyHealth" style="width: 100%"></div>
+                        </div>
+                        <div class="player-avatar">🧟‍♂️</div>
+                    </div>
+                </div>
+                <div class="battle-log" id="battleLog">
+                    <div class="log-entry">戦闘開始！</div>
+                </div>
+            </div>
+        `;
+        
+        controls.innerHTML = `
+            <div class="combat-actions">
+                <button class="combat-btn attack-btn" id="attackBtn">⚔️ 攻撃</button>
+                <button class="combat-btn defend-btn" id="defendBtn">🛡️ 防御</button>
+                <button class="combat-btn special-btn" id="specialBtn">✨ 特殊攻撃</button>
+            </div>
+            <div class="game-score">ダメージ与えた: <span id="gameScore">0</span></div>
+        `;
+
+        let playerHP = 100;
+        let enemyHP = 100;
+        let isDefending = false;
+        
+        const addBattleLog = (message) => {
+            const log = document.getElementById('battleLog');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = message;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+        };
+
+        const updateHealthBars = () => {
+            document.getElementById('playerHealth').style.width = playerHP + '%';
+            document.getElementById('enemyHealth').style.width = enemyHP + '%';
+        };
+
+        const enemyTurn = () => {
+            setTimeout(() => {
+                const enemyActions = ['attack', 'defend', 'special'];
+                const action = enemyActions[Math.floor(Math.random() * enemyActions.length)];
+                
+                if (action === 'attack') {
+                    const damage = isDefending ? 5 : 15;
+                    playerHP = Math.max(0, playerHP - damage);
+                    addBattleLog(`敵の攻撃！ ${damage}ダメージ`);
+                } else if (action === 'special') {
+                    const damage = isDefending ? 8 : 25;
+                    playerHP = Math.max(0, playerHP - damage);
+                    addBattleLog(`敵の特殊攻撃！ ${damage}ダメージ`);
+                } else {
+                    addBattleLog('敵が防御態勢を取った');
+                }
+                
+                isDefending = false;
+                updateHealthBars();
+                
+                if (playerHP <= 0) {
+                    this.endMinecraftGame('敗北... 再挑戦しよう！');
+                } else if (enemyHP <= 0) {
+                    this.endMinecraftGame('勝利！ PvPマスター！');
+                }
+            }, 1500);
+        };
+
+        document.getElementById('attackBtn').addEventListener('click', () => {
+            const damage = 20;
+            enemyHP = Math.max(0, enemyHP - damage);
+            this.gameScore += damage;
+            addBattleLog(`あなたの攻撃！ ${damage}ダメージ`);
+            document.getElementById('gameScore').textContent = this.gameScore;
+            updateHealthBars();
+            
+            if (enemyHP > 0) enemyTurn();
+        });
+
+        document.getElementById('defendBtn').addEventListener('click', () => {
+            isDefending = true;
+            addBattleLog('防御態勢！');
+            enemyTurn();
+        });
+
+        document.getElementById('specialBtn').addEventListener('click', () => {
+            const damage = 35;
+            enemyHP = Math.max(0, enemyHP - damage);
+            this.gameScore += damage;
+            addBattleLog(`特殊攻撃！ ${damage}ダメージ`);
+            document.getElementById('gameScore').textContent = this.gameScore;
+            updateHealthBars();
+            
+            if (enemyHP > 0) enemyTurn();
+        });
+    }
+
+    // Enhanced event binding for new features
+    bindMinecraftEvents() {
+        // Record mining button
+        const recordMiningBtn = document.getElementById('recordMining');
+        if (recordMiningBtn) {
+            recordMiningBtn.addEventListener('click', () => this.recordCurrentMining());
+        }
+
+        // Inventory management
+        const inventoryBtn = document.getElementById('inventoryBtn');
+        if (inventoryBtn) {
+            inventoryBtn.addEventListener('click', () => this.toggleInventoryDisplay());
+        }
+
+        // Crafting system
+        const craftingBtn = document.getElementById('craftingBtn');
+        if (craftingBtn) {
+            craftingBtn.addEventListener('click', () => this.openCraftingInterface());
+        }
+
+        // Building projects
+        const buildingBtn = document.getElementById('buildingBtn');
+        if (buildingBtn) {
+            buildingBtn.addEventListener('click', () => this.openBuildingInterface());
+        }
+
+        // Quick mining
+        const quickMineBtn = document.getElementById('quickMineBtn');
+        if (quickMineBtn) {
+            quickMineBtn.addEventListener('click', () => this.performQuickMining());
+        }
+
+        // Intensity slider
+        const intensitySlider = document.getElementById('intensitySlider');
+        const intensityValue = document.getElementById('intensityValue');
+        if (intensitySlider && intensityValue) {
+            intensitySlider.addEventListener('input', (e) => {
+                this.currentIntensity = parseInt(e.target.value);
+                intensityValue.textContent = this.currentIntensity;
+            });
+        }
+
+        // Progress stats toggle
+        const toggleProgressStats = document.getElementById('toggleProgressStats');
+        if (toggleProgressStats) {
+            toggleProgressStats.addEventListener('click', () => this.toggleProgressDisplay());
+        }
+    }
+
+    toggleInventoryDisplay() {
+        const inventorySection = document.getElementById('inventorySection');
+        if (inventorySection) {
+            const isVisible = inventorySection.style.display !== 'none';
+            inventorySection.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                this.renderInventory();
+            }
+        }
+    }
+
+    openCraftingInterface() {
+        // Placeholder for crafting system
+        this.showNotification('🔨 クラフトシステム - 近日公開！');
+    }
+
+    openBuildingInterface() {
+        // Placeholder for building system
+        this.showNotification('🏗️ 建築システム - 近日公開！');
+    }
+
+    performQuickMining() {
+        if (!this.currentBiome) {
+            this.showNotification('先にバイオームを選択してください');
+            return;
+        }
+        
+        this.recordCurrentMining();
+    }
+
+    toggleProgressDisplay() {
+        const progressSections = [
+            'biomeLevelsDisplay',
+            'minecraftAchievementsDisplay',
+            'rareCollectionsDisplay'
+        ];
+        
+        progressSections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const isVisible = section.style.display !== 'none';
+                section.style.display = isVisible ? 'none' : 'block';
+            }
+        });
+        
+        const toggleBtn = document.getElementById('toggleProgressStats');
+        if (toggleBtn) {
+            const isVisible = document.getElementById('biomeLevelsDisplay').style.display !== 'none';
+            toggleBtn.textContent = isVisible ? '詳細データを非表示' : '詳細データを表示';
+        }
+    }
+
+    // Override the original bindEvents method to include new functionality
+    bindEvents() {
+        // Original biome events
+        const biomeButtons = document.querySelectorAll('.biome-btn');
+        biomeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const biome = e.target.dataset.biome;
+                if (this.biomeProgress[biome]?.unlocked) {
+                    this.handleBiomeSelection(biome);
+                } else {
+                    this.showLockedBiomeMessage(biome);
+                }
+            });
+        });
+
+        // Theme events
+        if (this.themeSelector) {
+            this.themeSelector.addEventListener('change', (e) => {
+                const selectedTheme = e.target.value;
+                this.saveThemePreference(selectedTheme);
+                this.applyTheme(selectedTheme);
+            });
+        }
+
+        // Game events
+        const gameButtons = [
+            { id: 'startMiningGame', game: 'mining' },
+            { id: 'startBuildingGame', game: 'building' },
+            { id: 'startSurvivalGame', game: 'survival' },
+            { id: 'startRedstoneGame', game: 'redstone' },
+            { id: 'startPvPGame', game: 'pvp' }
+        ];
+        
+        gameButtons.forEach(({ id, game }) => {
+            const button = document.getElementById(id);
+            if (button) {
+                button.addEventListener('click', () => this.startMinecraftGame(game));
+            }
+        });
+        
+        const exitGameBtn = document.getElementById('exitGame');
+        if (exitGameBtn) {
+            exitGameBtn.addEventListener('click', () => this.exitMinecraftGame());
+        }
+
+        // Bind additional Minecraft-specific events
+        this.bindMinecraftEvents();
+
+        // Initialize displays
+        this.renderPlayerStats();
+        this.renderCreatureDisplay();
+        this.updateBiomeButtons();
+    }
+
+    updateBiomeButtons() {
+        const biomeButtons = document.querySelectorAll('.biome-btn');
+        biomeButtons.forEach(button => {
+            const biome = button.dataset.biome;
+            if (this.biomeProgress[biome]?.unlocked) {
+                button.classList.remove('locked');
+                button.classList.add('unlocked');
+            } else {
+                button.classList.remove('unlocked');
+                button.classList.add('locked');
+            }
+        });
+    }
+}
+
+// Initialize the Minecraft Vibe Crafting app
+const minecraftApp = new MinecraftVibeCrafting();
