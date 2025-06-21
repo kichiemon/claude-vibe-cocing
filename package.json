@@ -1,0 +1,24 @@
+{
+  "name": "minecraft-vibe-crafting",
+  "version": "1.0.0",
+  "description": "A Minecraft-style mood tracking and gaming application",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "python3 -m http.server 8080 || python -m SimpleHTTPServer 8080 || npx http-server . -p 8080 -c-1",
+    "check": "make check",
+    "test": "make test",
+    "build": "make build",
+    "dev": "make dev",
+    "lint": "make lint",
+    "clean": "make clean",
+    "stats": "make stats"
+  },
+  "keywords": ["minecraft", "mood-tracking", "gaming", "javascript", "es-modules"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
